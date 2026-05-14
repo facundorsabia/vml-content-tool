@@ -10,7 +10,7 @@
 ### Arquitectura Modular
 
 ```
-nbsp-detector/
+vml-content-tool/
 ├── manifest.json                  Configuración MV3
 ├── assets/
 │   └── logo-vml.png               Logo VML para branding

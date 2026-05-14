@@ -2,8 +2,7 @@
   "manifest_version": 3,
   "name": "VML Content Tool",
   "version": "2.0",
-  "description": "Herramienta de QA: detecta &nbsp; y busca coincidencias exactas de texto en páginas web. VML Argentina - Engineering Team.",
-  "author": "Facundo Rodriguez Sabia",
+  "description": "Suite de herramientas para Content Editors de VML.",
   "permissions": [
     "storage",
     "activeTab"
