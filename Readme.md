@@ -1,8 +1,6 @@
-# VML Nbsp Detector 🛠️
+# VML Content Tool 🛠️
 
-Una herramienta de QA de alto rendimiento diseñada para detectar y resaltar visualmente entidades `&nbsp;` (non-breaking spaces) renderizadas en el DOM. Ideal para evitar errores de alineación y bugs visuales en implementaciones de AEM, Sitecore o desarrollos Custom.
-
-**Desarrollado por:** Facundo Rodriguez Sabia (VML Front-End Team)
+Una suite de herramientas de QA y productividad diseñada específicamente para optimizar las tareas cotidianas de los Content Editors de VML, especialmente dentro de ecosistemas como Adobe Experience Manager (AEM). Esta herramienta es un proyecto "vivo", alimentado y actualizado constantemente por el equipo de desarrollo y automatizaciones para resolver los desafíos reales que surgen en el día a día de la edición de contenidos.
 
 ## 📋 Requisitos
 * Google Chrome (o cualquier navegador basado en Chromium).
@@ -42,4 +40,4 @@ Esta extensión ha sido desarrollada siguiendo estrictamente los altos estándar
 4. **Iframe Traversal Seguro**: El algoritmo de búsqueda accede exclusivamente a iframes que cumplen con la política de **mismo origen (Same-Origin)**. Los iframes externos (CORS) son detectados y omitidos automáticamente para proteger la integridad y privacidad.
 5. **Isolated World**: El script opera en un mundo aislado provisto por Chrome, garantizando que no pueda interferir con la lógica de negocio ni acceder a variables globales del sitio web.
 6. **Permisos Mínimos**: Se utiliza `storage` para persistir preferencias y `activeTab` para validar la seguridad de la página antes de iniciar una búsqueda, evitando errores en páginas internas de Chrome.
-7. **Cumplimiento Interno**: Diseñada para auditoría visual y QA. Se recomienda mantener la herramienta en estado OFF al manipular información transaccional sensible en producción.
+7. **Cumplimiento Interno**: Diseñada para auditoría visual y QA. Se recomienda mantener la herramienta en estado OFF al manipular información transaccional sensible en producción.
