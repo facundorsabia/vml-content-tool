@@ -1,41 +1,42 @@
+// ============================================
+// VML Content Tool v2.0 — Popup: NBSP Detector
+// Módulo de UI para el toggle y slider de NBSP
+// ============================================
+
+// === DOM References ===
 const checkbox = document.getElementById('statusCheckbox');
-const indicatorOn = document.getElementById('indicatorOn');
-const indicatorOff = document.getElementById('indicatorOff');
+const statusDot = document.getElementById('statusDot');
+const statusLabel = document.getElementById('statusLabel');
 const highlightSlider = document.getElementById('highlightSlider');
 
-// Función para actualizar la UI según el estado
-function updateUI(isActive) {
+// === UI Update ===
+function updateNbspUI(isActive) {
   checkbox.checked = isActive;
 
   if (isActive) {
-    indicatorOn.classList.remove('inactive');
-    indicatorOn.classList.add('active');
-    indicatorOff.classList.remove('active');
-    indicatorOff.classList.add('inactive');
+    statusDot.classList.add('on');
+    statusLabel.textContent = 'ENCENDIDO';
   } else {
-    indicatorOn.classList.remove('active');
-    indicatorOn.classList.add('inactive');
-    indicatorOff.classList.remove('inactive');
-    indicatorOff.classList.add('active');
+    statusDot.classList.remove('on');
+    statusLabel.textContent = 'APAGADO';
   }
 }
 
-// Cargar estado inicial al abrir el popup
+// Load initial state
 chrome.storage.local.get(['active', 'highlightOpacity'], (result) => {
   const active = !!result.active;
-  updateUI(active);
+  updateNbspUI(active);
 
-  // Slider: default 100 si no hay valor guardado
   const opacity = result.highlightOpacity !== undefined ? result.highlightOpacity : 100;
   highlightSlider.value = opacity;
 });
 
-// Escuchar cambios en el switch deslizante
+// Toggle listener
 checkbox.addEventListener('change', () => {
   const newState = checkbox.checked;
 
   chrome.storage.local.set({ active: newState }, () => {
-    updateUI(newState);
+    updateNbspUI(newState);
 
     // Recargar la pestaña actual para aplicar/quitar los resaltados
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -46,12 +47,11 @@ checkbox.addEventListener('change', () => {
   });
 });
 
-// Escuchar cambios en el slider de resaltado visual
+// Slider listener
 highlightSlider.addEventListener('input', () => {
   const opacity = parseInt(highlightSlider.value, 10);
 
   chrome.storage.local.set({ highlightOpacity: opacity }, () => {
-    // Recargar la pestaña actual para aplicar la nueva intensidad
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0] && tabs[0].id) {
         chrome.tabs.reload(tabs[0].id);

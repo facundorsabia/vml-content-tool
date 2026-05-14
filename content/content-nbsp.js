@@ -1,3 +1,8 @@
+// ============================================
+// VML Content Tool v2.0 — Content: NBSP Detector
+// Detecta y resalta visualmente &nbsp; en la página
+// ============================================
+
 chrome.storage.local.get(['active', 'highlightOpacity'], (result) => {
   if (result.active) {
     // Seguridad adicional: Asegurarnos de que opacity sea un número válido

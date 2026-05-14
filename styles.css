@@ -1,9 +1,0 @@
-/* Fallback styles — overridden by dynamic injection in content.js */
-.highlight-nbsp {
-  background-color: rgba(255, 0, 0, 1) !important;
-  outline: 2px solid rgba(255, 0, 0, 1) !important;
-  display: inline-block;
-  min-width: 5px;
-  min-height: 1em;
-  border-radius: 2px;
-}

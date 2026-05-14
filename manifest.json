@@ -1,18 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "VML Nbsp Detector",
-  "version": "1.2",
-  "description": "Herramienta de QA para detectar y resaltar visualmente entidades &nbsp; (non-breaking spaces) en entornos de desarrollo. Desarrollado por Facundo Rodriguez Sabia.",
+  "name": "VML Content Tool",
+  "version": "2.0",
+  "description": "Herramienta de QA: detecta &nbsp; y busca coincidencias exactas de texto en páginas web. VML Argentina - Engineering Team.",
   "author": "Facundo Rodriguez Sabia",
   "permissions": [
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "logo-vml.png"
+    "default_popup": "popup/popup.html",
+    "default_icon": "assets/logo-vml.png"
   },
   "icons": {
-    "128": "logo-vml.png"
+    "128": "assets/logo-vml.png"
   },
   "content_scripts": [
     {
@@ -20,10 +21,11 @@
         "<all_urls>"
       ],
       "js": [
-        "content.js"
+        "content/content-nbsp.js",
+        "content/content-finder.js"
       ],
       "css": [
-        "styles.css"
+        "styles/content.css"
       ]
     }
   ]
