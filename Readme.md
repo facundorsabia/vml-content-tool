@@ -22,7 +22,12 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 * Los espacios detectados aparecerán con un resaltado **rojo** semitransparente.
 * Ajusta la intensidad del resaltado con el slider inferior.
 
-### 2. Exact Disclosure Finder
+### 2. AEM Quick Switcher
+* Colección de atajos rápidos para navegar dentro de Adobe Experience Manager.
+* **VAP ➔ EDITOR**: Abre el modo Editor de AEM en una nueva pestaña partiendo de una URL en modo View as Publish (VAP).
+* **CF ➔ ADMIN FILES**: Salta directamente desde el editor de un fragmento de contenido a la carpeta de Assets (DAM) donde está guardado, sin tener que navegar por todo el árbol.
+
+### 3. Exact Disclosure Finder
 * Escribe o pega la frase exacta que deseas buscar en el cuadro de texto.
 * Haz clic en **BUSCAR** para resaltar las coincidencias en **verde**.
 * **Filtro Inteligente**: La búsqueda es insensible a mayúsculas/minúsculas y elimina automáticamente espacios extra y símbolos legales (®, ™, ©, ℠) para garantizar coincidencias limpias.
