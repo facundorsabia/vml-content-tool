@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 2. Switch CF to Admin (Assets)
+  // 2. Switch CF Editor to Admin (Assets)
   btnAssets.addEventListener('click', async () => {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

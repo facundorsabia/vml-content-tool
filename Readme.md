@@ -25,7 +25,7 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 ### 2. AEM Quick Switcher
 * Colección de atajos rápidos para navegar dentro de Adobe Experience Manager.
 * **VAP ➔ EDITOR**: Abre el modo Editor de AEM en una nueva pestaña partiendo de una URL en modo View as Publish (VAP).
-* **CF ➔ ADMIN FILES**: Salta directamente desde el editor de un fragmento de contenido a la carpeta de Assets (DAM) donde está guardado, sin tener que navegar por todo el árbol.
+* **CF Editor ➔ Admin**: Salta directamente desde el editor de un fragmento de contenido a la carpeta de Assets (DAM) donde está guardado, sin tener que navegar por todo el árbol.
 
 ### 3. Exact Disclosure Finder
 * Escribe o pega la frase exacta que deseas buscar en el cuadro de texto.
