@@ -2,6 +2,6 @@
 * text=auto
 
 # Archivos a ignorar al exportar el ZIP
-Agents.md export-ignore
+.antigravity/ export-ignore
 .gitignore export-ignore
 .gitattributes export-ignore
