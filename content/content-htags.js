@@ -9,21 +9,31 @@ chrome.storage.local.get(['htagsActive'], (result) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'toggleHtags') {
+    if (request.isActive) {
+      runHTagVisualizer();
+    } else {
+      removeHTagVisualizer();
+    }
+    sendResponse({ success: true });
+  }
+});
+
 function runHTagVisualizer() {
   const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
   
   headings.forEach(heading => {
     const tagName = heading.tagName.toUpperCase();
-    
-    // Evitar inyectar múltiples veces si ya existe
     if (heading.querySelector('.htag-badge')) return;
 
-    // PREVENCIÓN XSS: Usamos createElement y textContent
     const badge = document.createElement('span');
     badge.className = `htag-badge htag-badge-${tagName.toLowerCase()}`;
     badge.textContent = tagName;
-    
-    // Inyectamos el badge al final del encabezado
     heading.appendChild(badge);
   });
+}
+
+function removeHTagVisualizer() {
+  document.querySelectorAll('.htag-badge').forEach(badge => badge.remove());
 }
