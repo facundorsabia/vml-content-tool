@@ -9,17 +9,6 @@ chrome.storage.local.get(['htagsActive'], (result) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'toggleHtags') {
-    if (request.isActive) {
-      runHTagVisualizer();
-    } else {
-      removeHTagVisualizer();
-    }
-    sendResponse({ success: true });
-  }
-});
-
 function runHTagVisualizer() {
   const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
   
@@ -32,8 +21,4 @@ function runHTagVisualizer() {
     badge.textContent = tagName;
     heading.appendChild(badge);
   });
-}
-
-function removeHTagVisualizer() {
-  document.querySelectorAll('.htag-badge').forEach(badge => badge.remove());
 }

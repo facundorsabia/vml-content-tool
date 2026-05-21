@@ -34,14 +34,10 @@ htagCheckbox.addEventListener('change', () => {
   chrome.storage.local.set({ htagsActive: newState }, () => {
     updateHtagUI(newState);
 
-    // Enviar mensaje dinámico en lugar de recargar la página
+    // Recargar la pestaña actual para aplicar/quitar los resaltados
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0] && tabs[0].id) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'toggleHtags', isActive: newState }, () => {
-          if (chrome.runtime.lastError) {
-            // Silencioso si el content script no está cargado
-          }
-        });
+        chrome.tabs.reload(tabs[0].id);
       }
     });
   });
