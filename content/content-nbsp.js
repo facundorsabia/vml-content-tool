@@ -3,13 +3,9 @@
 // Detecta y resalta visualmente &nbsp; en la página
 // ============================================
 
-chrome.storage.local.get(['active', 'highlightOpacity'], (result) => {
+chrome.storage.local.get(['active'], (result) => {
   if (result.active) {
-    // Seguridad adicional: Asegurarnos de que opacity sea un número válido
-    // para prevenir CSS Injection al crear la etiqueta <style>
-    const rawOpacity = parseFloat(result.highlightOpacity);
-    const opacity = !isNaN(rawOpacity) ? rawOpacity : 100;
-    runDetector(opacity / 100);
+    runDetector(1); // Opacity is permanently set to 100%
   }
 });
 

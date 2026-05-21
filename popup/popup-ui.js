@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Abrir el primero por defecto
-  if (accordionHeaders.length > 0) {
-    accordionHeaders[0].parentElement.classList.add('active');
-  }
+  // Eliminado: Abrir el primero por defecto
+  // if (accordionHeaders.length > 0) {
+  //   accordionHeaders[0].parentElement.classList.add('active');
+  // }
 });

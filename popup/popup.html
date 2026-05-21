@@ -41,17 +41,6 @@
               </label>
             </div>
           </div>
-
-          <div class="field-group">
-            <label class="field-label">Resaltado Visual</label>
-            <div class="range-container">
-              <input type="range" id="highlightSlider" min="0" max="100" value="100">
-              <div class="range-labels">
-                <span>0%</span>
-                <span>100%</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -123,6 +112,31 @@
       </div>
     </div>
 
+    <!-- Module 5: HTag Visualizer -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <h2 class="module-title">5. HTag Visualizer</h2>
+        <span class="accordion-icon">&#9662;</span>
+      </div>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <div class="field-group">
+            <label class="field-label">Estado</label>
+            <div class="status-row">
+              <div class="status-display" id="htagStatusDisplay">
+                <span class="status-dot" id="htagStatusDot"></span>
+                <span class="status-text" id="htagStatusLabel">APAGADO</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="htagStatusCheckbox">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Footer: VML Branding -->
@@ -140,6 +154,7 @@
   <script src="popup-finder.js"></script>
   <script src="popup-aem.js"></script>
   <script src="popup-autofiller.js"></script>
+  <script src="popup-htags.js"></script>
 </body>
 
 </html>

@@ -19,8 +19,7 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 ### 1. NBSP Detector
 * Haz clic en el icono de la extensión para abrir el panel de control.
 * Activa el switch para resaltar los espacios `&nbsp;` en la página actual.
-* Los espacios detectados aparecerán con un resaltado **rojo** semitransparente.
-* Ajusta la intensidad del resaltado con el slider inferior.
+* Los espacios detectados aparecerán con un resaltado **rojo**.
 
 ### 2. AEM Quick Switcher
 * Colección de atajos rápidos para navegar dentro de Adobe Experience Manager.
@@ -42,6 +41,12 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 * **Mapeo de columnas**: La primera columna del Excel se mapea al primer `.ql-editor` editable de cada fila del DOM (ignorando checkboxes/selectores).
 * **Feedback visual**: Muestra un resumen con la cantidad de celdas rellenadas y omitidas al finalizar.
 * **Protección XSS**: Los valores se sanitizan antes de inyectarlos, escapando entidades HTML.
+
+### 5. HTag Visualizer
+* Haz clic en el icono de la extensión para abrir el panel de control.
+* Activa el switch **ENCENDIDO** para inyectar etiquetas visuales ('H1', 'H2', etc.) de forma contigua a cada encabezado de la página.
+* Diseñado para auditorías de QA para verificar la estructura semántica de encabezados de forma rápida, evitando abrir dev tools.
+* Al apagar el módulo, las etiquetas se remueven automáticamente gracias al refresco de estado.
 
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
