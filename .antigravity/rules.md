@@ -97,3 +97,18 @@ Every developer and AI agent working on this extension must satisfy the followin
 > [!IMPORTANT]
 > **Keep Documentation strictly synchronized.**
 > Whenever you modify codebase files or implement a new feature, you MUST assess if `Readme.md` or `rules.md` needs revision. Never leave features undocumented. Keep all changes clean, commented, and explained in the primary documentation files.
+
+---
+
+## 🤖 Automatic Version Increment Rule
+> [!IMPORTANT]
+> **Automatic Version Increment on Commit:**
+> Each time a Git commit is executed, the `manifest.json` version number MUST automatically increment by `0.1` (e.g., `2.0` $\rightarrow$ `2.1`).
+> This behavior is automated via a local Git `pre-commit` hook (stored at `.git/hooks/pre-commit`). If modifying codebase configuration or building features, ensure this hook remains intact so version releases are tracked accurately on every commit.
+
+---
+
+## 🗣️ Agent Response & Token Optimization Rules
+> [!IMPORTANT]
+> * **Language:** All AI Agent responses, explanations, and summaries MUST be written exclusively in **English**, regardless of the language utilized by the user.
+> * **Conciseness & Token Optimization:** Keep all answers extremely short, concise, and direct. Maximize token efficiency by avoiding conversational fluff, redundant pleasantries, or verbose code summaries. Let clean code modifications, diffs, and precise files speak for themselves.
