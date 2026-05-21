@@ -5,7 +5,8 @@
   "description": "Suite de herramientas para Content Editors de VML.",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "action": {
     "default_popup": "popup/popup.html",
@@ -21,7 +22,8 @@
       ],
       "js": [
         "content/content-nbsp.js",
-        "content/content-finder.js"
+        "content/content-finder.js",
+        "content/content-autofiller.js"
       ],
       "css": [
         "styles/content.css"

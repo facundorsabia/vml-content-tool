@@ -475,6 +475,77 @@ input[type="range"]::-moz-range-track {
   font-weight: 700;
 }
 
+/* ============================================
+   SPECS VDM AUTOFILLER — Textarea + Controls + Status
+   ============================================ */
+#autofillInput {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 12px;
+  min-height: 80px;
+}
+
+#autofillInput::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 11px;
+}
+
+#autofillInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(45, 158, 158, 0.12);
+}
+
+.autofill-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.autofill-status {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+  transition: all 0.3s ease;
+}
+
+.autofill-status--success {
+  color: var(--accent-green);
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.autofill-status--error {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+.autofill-status--info {
+  color: var(--accent-light);
+  background: rgba(45, 158, 158, 0.08);
+  border: 1px solid rgba(45, 158, 158, 0.2);
+}
+
+.btn-search:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 
 
 /* ============================================

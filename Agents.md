@@ -15,13 +15,15 @@ vml-content-tool/
 ├── assets/
 │   └── logo-vml.png               Logo VML para branding
 ├── popup/
-│   ├── popup.html                 UI: layout 2 columnas
+│   ├── popup.html                 UI: layout accordion
 │   ├── popup.css                  Dark theme premium
 │   ├── popup-nbsp.js              Popup: toggle + slider NBSP
-│   └── popup-finder.js            Popup: búsqueda exacta + navegación
+│   ├── popup-finder.js            Popup: búsqueda exacta + navegación
+│   └── popup-autofiller.js        Popup: parseo TSV + envío de datos
 ├── content/
 │   ├── content-nbsp.js            Content: detección y highlight NBSP (rojo)
-│   └── content-finder.js          Content: búsqueda exacta + iframe traversal (verde)
+│   ├── content-finder.js          Content: búsqueda exacta + iframe traversal (verde)
+│   └── content-autofiller.js      Content: inyección en Quill.js / AEM
 ├── styles/
 │   └── content.css                Estilos inyectados: .highlight-nbsp + .highlight-exact-match
 ├── Agents.md
@@ -45,6 +47,19 @@ vml-content-tool/
 6. Aplica clase `.highlight-exact-match` (verde) a cada coincidencia
 7. Scroll automático al primer resultado (con soporte iframe)
 8. Navegación con botones ▲/▼ entre resultados
+
+### Flujo: Specs VDM Autofiller
+
+1. Usuario copia un rango de celdas desde Excel (formato TSV)
+2. Pega el contenido en el textarea del popup (módulo 4)
+3. Click en "AUTOCOMPLETAR TABLA" → `popup-autofiller.js` parsea el TSV (\n filas, \t columnas)
+4. Envía la matriz 2D al content script via `chrome.tabs.sendMessage` (action: `autoFillTable`)
+5. `content-autofiller.js` busca `.spec--table tbody tr` en el DOM
+6. Por cada fila, busca `.ql-editor[contenteditable="true"]` (editores Quill)
+7. Inyecta el valor sanitizado como `<p>VALOR</p>` en cada editor
+8. Despacha secuencia de eventos: focus → keydown(Ctrl+A) → input(insertText) → change → blur
+9. Delay de 80ms entre celdas para que AEM procese cada cambio
+10. Responde al popup con conteo de celdas rellenadas/omitidas
 
 ### Convención para Nuevos Módulos
 

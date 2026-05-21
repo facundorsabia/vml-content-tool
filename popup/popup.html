@@ -102,6 +102,27 @@
       </div>
     </div>
 
+    <!-- Module 4: Specs VDM Autofiller -->
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <h2 class="module-title">4. Specs VDM Autofiller</h2>
+        <span class="accordion-icon">&#9662;</span>
+      </div>
+      <div class="accordion-content">
+        <div class="accordion-inner">
+          <textarea id="autofillInput"
+                    placeholder="Pega las celdas desde Excel aquí..."
+                    rows="5"></textarea>
+
+          <div class="autofill-controls">
+            <button id="btnAutofill" class="btn-search">AUTOCOMPLETAR TABLA</button>
+          </div>
+
+          <p id="autofillStatus" class="autofill-status" style="display: none;"></p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Footer: VML Branding -->
@@ -118,6 +139,7 @@
   <script src="popup-nbsp.js"></script>
   <script src="popup-finder.js"></script>
   <script src="popup-aem.js"></script>
+  <script src="popup-autofiller.js"></script>
 </body>
 
 </html>

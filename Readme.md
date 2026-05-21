@@ -34,6 +34,15 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 * **Navegación**: Usa las flechas ▲/▼ para desplazarte entre los resultados encontrados.
 * **Soporte para Editores**: Capaz de buscar dentro de iframes (como el editor de Adobe Experience Manager) siempre que compartan el mismo origen.
 
+### 4. Specs VDM Autofiller
+* Copia un rango de celdas desde Excel (o cualquier hoja de cálculo que exporte en formato TSV).
+* Pega el contenido en el textarea del módulo dentro de la extensión.
+* Haz clic en **AUTOCOMPLETAR TABLA** para inyectar los valores en la tabla `.spec--table` de AEM.
+* **Compatibilidad AEM/Quill.js**: El módulo simula la interacción humana completa (focus, input, change, blur, eventos de teclado) sobre cada editor Quill (`[contenteditable="true"]`) para que AEM registre los cambios de estado correctamente.
+* **Mapeo de columnas**: La primera columna del Excel se mapea al primer `.ql-editor` editable de cada fila del DOM (ignorando checkboxes/selectores).
+* **Feedback visual**: Muestra un resumen con la cantidad de celdas rellenadas y omitidas al finalizar.
+* **Protección XSS**: Los valores se sanitizan antes de inyectarlos, escapando entidades HTML.
+
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
 
