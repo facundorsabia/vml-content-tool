@@ -48,6 +48,13 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 * Diseñado para auditorías de QA para verificar la estructura semántica de encabezados de forma rápida, evitando abrir dev tools.
 * Al apagar el módulo, las etiquetas se remueven automáticamente gracias al refresco de estado.
 
+### 6. Options Autofiller
+* Automatiza la carga masiva de datos en las tablas dinámicas de "Options" dentro de AEM.
+* **Soporte Multilínea (Matriz):** Seleccioná y copiá un bloque de celdas desde Excel (ej. 4 filas x 5 columnas) y pegalo en el área de texto de la extensión. Los guiones `-` se interpretan como celdas vacías y los valores `S` u `O` se seleccionan tal cual.
+* **Navegación Inteligente y Lazy Rendering:** Filtra automáticamente las filas de categorías de AEM y hace clic únicamente en las filas reales de opciones para forzar el renderizado de los selectores que están ocultos por rendimiento.
+* **Simulación Humana Extrema:** El bot despacha una secuencia precisa de eventos nativos (`mousedown`, `click`, `keydown`, `input`, `change`, `keyup`, `blur`, `focusout`) para engañar al estado de Vue y BootstrapVue, forzando el guardado automático de AEM.
+* **Feedback Visual Táctico:** Resalta temporalmente con un borde brillante el dropdown exacto que está siendo procesado en tiempo real, sin alterar los estilos base de la herramienta de autoría.
+
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
 

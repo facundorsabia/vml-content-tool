@@ -4,10 +4,11 @@
   "version": "2.2",
   "description": "Suite de herramientas para Content Editors de VML.",
   "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
-  ],
+      "storage",
+      "activeTab",
+      "scripting",
+      "webNavigation"
+    ],
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": "assets/logo-vml.png"
@@ -24,11 +25,13 @@
         "content/content-nbsp.js",
         "content/content-finder.js",
         "content/content-autofiller.js",
-        "content/content-htags.js"
+        "content/content-htags.js",
+        "content/content-dropdown.js"
       ],
       "css": [
         "styles/content.css"
-      ]
+      ],
+      "all_frames": true
     }
   ]
 }
