@@ -16,24 +16,31 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 
 ## ⚙️ Uso
 
-### 1. NBSP Detector
-* Haz clic en el icono de la extensión para abrir el panel de control.
-* Activa el switch para resaltar los espacios `&nbsp;` en la página actual.
-* Los espacios detectados aparecerán con un resaltado **rojo**.
-
-### 2. AEM Quick Switcher
+### 1. AEM Quick Switcher
 * Colección de atajos rápidos para navegar dentro de Adobe Experience Manager.
 * **VAP ➔ EDITOR**: Abre el modo Editor de AEM en una nueva pestaña partiendo de una URL en modo View as Publish (VAP).
 * **CF Editor ➔ Admin**: Salta directamente desde el editor de un fragmento de contenido a la carpeta de Assets (DAM) donde está guardado, sin tener que navegar por todo el árbol.
 
-### 3. Exact Disclosure Finder
+### 2. NBSP Detector
+* Haz clic en el icono de la extensión para abrir el panel de control.
+* Activa el switch para resaltar los espacios `&nbsp;` en la página actual.
+* Los espacios detectados aparecerán con un resaltado **rojo**.
+* **Limpieza global**: Al pegar datos en cualquier textarea de la extensión, los NBSP se limpian y convierten automáticamente a espacios normales para evitar fallas.
+
+### 3. HTag Visualizer
+* Haz clic en el icono de la extensión para abrir el panel de control.
+* Activa el switch **ENCENDIDO** para inyectar etiquetas visuales ('H1', 'H2', etc.) de forma contigua a cada encabezado de la página.
+* Diseñado para auditorías de QA para verificar la estructura semántica de encabezados de forma rápida, evitando abrir dev tools.
+* Al apagar el módulo, las etiquetas se remueven automáticamente gracias al refresco de estado.
+
+### 4. Exact Disclosure Finder
 * Escribe o pega la frase exacta que deseas buscar en el cuadro de texto.
 * Haz clic en **BUSCAR** para resaltar las coincidencias en **verde**.
 * **Filtro Inteligente**: La búsqueda es insensible a mayúsculas/minúsculas y elimina automáticamente espacios extra y símbolos legales (®, ™, ©, ℠) para garantizar coincidencias limpias.
 * **Navegación**: Usa las flechas ▲/▼ para desplazarte entre los resultados encontrados.
 * **Soporte para Editores**: Capaz de buscar dentro de iframes (como el editor de Adobe Experience Manager) siempre que compartan el mismo origen.
 
-### 4. Specs VDM Autofiller
+### 5. VDM Specs Autofiller
 * Copia un rango de celdas desde Excel (o cualquier hoja de cálculo que exporte en formato TSV).
 * Pega el contenido en el textarea del módulo dentro de la extensión.
 * Haz clic en **AUTOCOMPLETAR TABLA** para inyectar los valores en la tabla `.spec--table` de AEM.
@@ -42,18 +49,18 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 * **Feedback visual**: Muestra un resumen con la cantidad de celdas rellenadas y omitidas al finalizar.
 * **Protección XSS**: Los valores se sanitizan antes de inyectarlos, escapando entidades HTML.
 
-### 5. HTag Visualizer
-* Haz clic en el icono de la extensión para abrir el panel de control.
-* Activa el switch **ENCENDIDO** para inyectar etiquetas visuales ('H1', 'H2', etc.) de forma contigua a cada encabezado de la página.
-* Diseñado para auditorías de QA para verificar la estructura semántica de encabezados de forma rápida, evitando abrir dev tools.
-* Al apagar el módulo, las etiquetas se remueven automáticamente gracias al refresco de estado.
-
-### 6. Options VDM Autofiller
+### 6. VDM Options Autofiller
 * Automatiza la carga masiva de datos en las tablas dinámicas de "Options" dentro de AEM.
 * **Soporte Multilínea (Matriz):** Seleccioná y copiá un bloque de celdas desde Excel (ej. 4 filas x 5 columnas) y pegalo en el área de texto de la extensión. Los guiones `-` se interpretan como celdas vacías y los valores `S` u `O` se seleccionan tal cual.
 * **Navegación Inteligente y Lazy Rendering:** Filtra automáticamente las filas de categorías de AEM y hace clic únicamente en las filas reales de opciones para forzar el renderizado de los selectores que están ocultos por rendimiento.
 * **Simulación Humana Extrema:** El bot despacha una secuencia precisa de eventos nativos (`mousedown`, `click`, `keydown`, `input`, `change`, `keyup`, `blur`, `focusout`) para engañar al estado de Vue y BootstrapVue, forzando el guardado automático de AEM.
 * **Feedback Visual Táctico:** Resalta temporalmente con un borde brillante el dropdown exacto que está siendo procesado en tiempo real, sin alterar los estilos base de la herramienta de autoría.
+
+### 7. VDM Equipment Mass Creator
+* Permite crear masivamente equipamientos dentro de la carpeta correspondiente en AEM de manera directa y veloz, puenteando la pesada y lenta UI clásica.
+* **Inyección de Red Directa**: Utiliza peticiones `fetch()` HTTP POST dirigidas a la API de Sling de AEM, heredando automáticamente las cookies de autenticación de tu navegador y requiriendo un token CSRF seguro que la extensión obtiene por ti en segundo plano.
+* **Detección de Columnas Inteligente (Anti-Error)**: Admite copiar de Excel las columnas `Option Category` y `Title` tanto en el orden convencional como de forma invertida (`[Título] [Categoría]`). La extensión detecta el orden correcto de forma dinámica haciendo una comprobación cruzada contra el diccionario estático de categorías de AEM y las corrige en memoria.
+* **Saneamiento Automático de Nombres (Node Hint)**: Las tildes, espacios múltiples, comillas dobles, pulgadas, diagonales y caracteres especiales de los títulos Excel se normalizan automáticamente a un formato alfanumérico seguro para generar la sugerencia de nombre (`:nameHint`) de Sling sin romper la API.
 
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
