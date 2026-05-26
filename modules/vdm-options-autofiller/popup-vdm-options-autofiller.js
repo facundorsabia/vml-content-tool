@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   btn.addEventListener('click', async () => {
-    const rawValue = inputEl.value;
+    const rawValue = inputEl.value.replace(/\u00A0/g, ' ');
     if (!rawValue || rawValue.trim().length === 0) {
       showStatus('error', 'El campo de texto está vacío.');
       return;

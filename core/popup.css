@@ -479,7 +479,8 @@ input[type="range"]::-moz-range-track {
    SPECS VDM AUTOFILLER — Textarea + Controls + Status
    ============================================ */
 #autofillInput,
-#dropdownInput {
+#dropdownInput,
+#vdmEquipmentInput {
   width: 100%;
   padding: 10px 12px;
   background: var(--bg-input);

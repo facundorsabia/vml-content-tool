@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Botón AUTOCOMPLETAR ---
   btn.addEventListener('click', async () => {
-    const raw = textarea.value;
+    const raw = textarea.value.replace(/\u00A0/g, ' ');
 
     if (!raw || raw.trim().length === 0) {
       showStatus('error', 'El textarea está vacío. Pegá las celdas desde Excel.');

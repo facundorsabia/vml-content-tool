@@ -29,7 +29,7 @@ function updateFinderUI() {
 
 // Search button
 searchBtn.addEventListener('click', () => {
-  const query = searchInput.value.trim();
+  const query = searchInput.value.replace(/\u00A0/g, ' ').trim();
   if (!query) return;
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
