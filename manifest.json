@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VML Content Tool",
-  "version": "2.2",
+  "version": "2.3",
   "description": "Suite de herramientas para Content Editors de VML.",
   "permissions": [
       "storage",
@@ -10,7 +10,7 @@
       "webNavigation"
     ],
   "action": {
-    "default_popup": "popup/popup.html",
+    "default_popup": "core/popup.html",
     "default_icon": "assets/logo-vml.png"
   },
   "icons": {
@@ -22,14 +22,14 @@
         "<all_urls>"
       ],
       "js": [
-        "content/content-nbsp.js",
-        "content/content-finder.js",
-        "content/content-autofiller.js",
-        "content/content-htags.js",
-        "content/content-dropdown.js"
+        "modules/nbsp/content-nbsp.js",
+        "modules/finder/content-finder.js",
+        "modules/autofiller/content-autofiller.js",
+        "modules/htags/content-htags.js",
+        "modules/dropdown/content-dropdown.js"
       ],
       "css": [
-        "styles/content.css"
+        "core/content.css"
       ],
       "all_frames": true
     }
