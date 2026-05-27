@@ -20,24 +20,33 @@ vml-content-tool/
 ├── manifest.json                  # Extension configuration (Manifest V3)
 ├── assets/
 │   └── logo-vml.png               # Branding assets
-├── popup/
-│   ├── popup.html                 # Main popup UI (premium accordion layout)
+├── core/
+│   ├── content.css                # Injected CSS styles (resaltados, badges, transition effects)
 │   ├── popup.css                  # UI styles (premium dark mode theme)
-│   ├── popup-ui.js                # Core UI helper (handles accordion open/close)
-│   ├── popup-nbsp.js              # NBSP detector UI handler
-│   ├── popup-finder.js            # Exact Disclosure Finder UI handler
-│   ├── popup-aem.js               # AEM Quick Switcher UI handler
-│   ├── popup-autofiller.js        # Specs VDM Autofiller UI handler
-│   └── popup-htags.js             # HTag Visualizer UI handler
-├── content/
-│   ├── content-nbsp.js            # NBSP detector core execution logic
-│   ├── content-finder.js          # Exact Disclosure Finder core execution logic
-│   ├── content-autofiller.js      # Specs VDM Autofiller core execution logic
-│   └── content-htags.js           # HTag Visualizer core execution logic
-├── styles/
-│   └── content.css                # Injected CSS styles (resaltados, badges, transition effects)
-├── .antigravity/
-│   └── rules.md                   # AI Agent System Instructions (This file)
+│   ├── popup.html                 # Main popup UI (premium accordion layout)
+│   └── popup-ui.js                # Core UI helper (handles accordion open/close)
+├── modules/
+│   ├── aem-switcher/              # AEM Quick Switcher module
+│   │   └── popup-aem.js
+│   ├── disclouse-finder/          # Exact Disclosure Finder module
+│   │   ├── content-disclouse-finder.js
+│   │   └── popup-disclouse-finder.js
+│   ├── htags-visualizer/          # HTag Visualizer module
+│   │   ├── content-htags-visualizer.js
+│   │   └── popup-htags-visualizer.js
+│   ├── nbsp-visualizer/           # NBSP detector module
+│   │   ├── content-nbsp-visualizer.js
+│   │   └── popup-nbsp-visualizer.js
+│   ├── vdm-equipment-creator/     # VDM Equipment Mass Creator module
+│   │   ├── content-vdm-equipment-creator.js
+│   │   └── popup-vdm-equipment-creator.js
+│   ├── vdm-options-autofiller/    # VDM Options Autofiller module
+│   │   ├── content-vdm-options-autofiller.js
+│   │   └── popup-vdm-options-autofiller.js
+│   └── vdm-specs-autofiller/      # Specs VDM Autofiller module
+│       ├── content-vdm-specs-autofiller.js
+│       └── popup-vdm-specs-autofiller.js
+├── .antigravityrules              # AI Agent System Instructions (This file)
 └── Readme.md                      # End-user documentation
 ```
 
@@ -46,39 +55,52 @@ vml-content-tool/
 ## 🔄 Core Flows
 
 ### 1. NBSP Detector
-* **Trigger:** User opens popup $\rightarrow$ `popup-nbsp.js` reads `chrome.storage.local.active`.
+* **Trigger:** User opens popup $\rightarrow$ `popup-nbsp-visualizer.js` reads `chrome.storage.local.active`.
 * **Action:** Turning the toggle **ON** saves `active: true` and reloads the current active tab. Turning it **OFF** saves `active: false` and reloads the tab.
-* **Execution:** `content-nbsp.js` is automatically injected $\rightarrow$ if `active` is `true`, it recursively parses `document.body` text nodes searching for `\u00A0` (non-breaking spaces).
+* **Execution:** `content-nbsp-visualizer.js` is automatically injected $\rightarrow$ if `active` is `true`, it recursively parses `document.body` text nodes searching for `\u00A0` (non-breaking spaces).
 * **Result:** Every detected `&nbsp;` is safely wrapped in a `<span class="highlight-nbsp">` (renders a semi-transparent red outline and background for high visibility).
 
 ### 2. Exact Disclosure Finder
 * **Trigger:** User enters exact search criteria into the popup's text area (Module 3).
-* **Action:** Clicking **BUSCAR** fires `popup-finder.js` which normalizes and dispatches an `exactMatchSearch` message to the active tab.
-* **Execution:** `content-finder.js` receives the message, parses all page elements (traversing nested, same-origin iframes), and performs a strict `===` equivalence check on normalized text.
+* **Action:** Clicking **BUSCAR** fires `popup-disclouse-finder.js` which normalizes and dispatches an `exactMatchSearch` message to the active tab.
+* **Execution:** `content-disclouse-finder.js` receives the message, parses all page elements (traversing nested, same-origin iframes), and performs a strict `===` equivalence check on normalized text.
 * **Result:** Matching elements are decorated with `.highlight-exact-match` (green overlay). The page automatically scrolls to the first match. The UI provides interactive pagination controls (▲/▼) to step through elements cleanly.
 
 ### 3. Specs VDM Autofiller
 * **Trigger:** User copies a cell range from Excel (TSV format) and pastes it into the Module 4 textarea.
-* **Action:** Clicking **AUTOCOMPLETAR TABLA** dispatches `popup-autofiller.js` to parse the input (\n for rows, \t for columns) and sends the 2D array via message passing to the page context.
-* **Execution:** `content-autofiller.js` locates the `.spec--table tbody tr` in the DOM and maps each column to active Quill editor instances (`.ql-editor[contenteditable="true"]`).
+* **Action:** Clicking **AUTOCOMPLETAR TABLA** dispatches `popup-vdm-specs-autofiller.js` to parse the input (\n for rows, \t for columns) and sends the 2D array via message passing to the page context.
+* **Execution:** `content-vdm-specs-autofiller.js` locates the `.spec--table tbody tr` in the DOM and maps each column to active Quill editor instances (`.ql-editor[contenteditable="true"]`).
 * **Trigger Events:** Generates full keyboard and input events (`focus` $\rightarrow$ `Ctrl+A` $\rightarrow$ `insertText` $\rightarrow$ `change` $\rightarrow$ `blur`) with a strict `80ms` delay between cells to allow AEM's framework handlers to intercept and save state.
 * **Result:** Feeds execution status back to the popup, giving real-time feedback on injected rows.
 
 ### 4. HTag Visualizer
-* **Trigger:** User toggles the state in Module 5 $\rightarrow$ `popup-htags.js` toggles `chrome.storage.local.htagsActive`.
+* **Trigger:** User toggles the state in Module 5 $\rightarrow$ `popup-htags-visualizer.js` toggles `chrome.storage.local.htagsActive`.
 * **Action:** Toggling **ON** reloads the active tab to execute the visualizer. Toggling **OFF** reloads the active tab to clear all visual artifacts.
-* **Execution:** `content-htags.js` matches all headers `h1, h2, h3, h4, h5, h6` in the active document.
+* **Execution:** `content-htags-visualizer.js` matches all headers `h1, h2, h3, h4, h5, h6` in the active document.
 * **Result:** Appends a small, color-coded, highly visible badge (e.g. `<span class="htag-badge htag-badge-h1">H1</span>`) directly alongside each header, letting QA teams verify structure instantly without opening inspector tools.
+
+### 5. VDM Options Autofiller
+* **Trigger:** User copies a matrix range from Excel (TSV format) and pastes it into the textarea.
+* **Action:** Clicking **AUTOCOMPLETAR OPCIONES** dispatches `popup-vdm-options-autofiller.js` to parse the input and sends the array to the page context.
+* **Execution:** `content-vdm-options-autofiller.js` locates the appropriate AEM rows, forces lazy rendering of Vue selects, and perfectly simulates human events (`mousedown`, `click`, `change`, `blur`) on the correct `<select>` elements.
+* **Result:** Real-time visual feedback highlights the dropdowns being processed and completes the entire matrix configuration autonomously.
+
+### 6. VDM Equipment Mass Creator
+* **Trigger:** User selects an existing VDM component in AEM and uses the form inside the extension popup.
+* **Action:** `popup-vdm-equipment-creator.js` dispatches an initialization message to capture the path.
+* **Execution:** `content-vdm-equipment-creator.js` extracts the `data-path` from the DOM. Then, it uses the Sling API via `fetch()` to iteratively create multiple nodes (`sling:resourceType="vml/components/content/vdm-equipment-item"`), correcting Excel title/category orders intelligently, and safely encoding special characters to generate robust `:nameHint` endpoints.
+* **Result:** Triggers a native UI page refresh upon completion to reflect the newly created equipment list directly in the AEM authoring environment.
 
 ---
 
 ## 🧩 Extension Integration Conventions
 When adding a new module (e.g., "Link Checker" or "Alt Visualizer"), you **must** follow this strict integration pattern:
-1. **Popup UI Logic:** Place all UI triggers and state queries in `popup/popup-[module_name].js`.
-2. **Content Script Logic:** Place actual page traversal or DOM editing logic in `content/content-[module_name].js`.
-3. **UI Integration:** Register the module inside `popup/popup.html` using an accordion container structure. Add the modular `<script src="popup-[module_name].js"></script>` block at the bottom.
-4. **Manifest Registration:** Append the newly created content script path to the `"js"` files inside the `"content_scripts"` array of `manifest.json`.
-5. **Styling Integration:** Place all new aesthetic style declarations (badges, animations, custom markers) at the end of `styles/content.css`.
+1. **Module Folder:** Create a new folder inside `modules/` (e.g., `modules/[module-name]/`).
+2. **Popup UI Logic:** Place all UI triggers and state queries in `modules/[module-name]/popup-[module-name].js`.
+3. **Content Script Logic:** Place actual page traversal or DOM editing logic in `modules/[module-name]/content-[module-name].js`.
+4. **UI Integration:** Register the module inside `core/popup.html` using an accordion container structure. Add the modular `<script src="../modules/[module-name]/popup-[module-name].js"></script>` block at the bottom.
+5. **Manifest Registration:** Append the newly created content script path to the `"js"` files inside the `"content_scripts"` array of `manifest.json`.
+6. **Styling Integration:** Place all new aesthetic style declarations (badges, animations, custom markers) at the end of `core/content.css` or `core/popup.css`.
 
 ---
 

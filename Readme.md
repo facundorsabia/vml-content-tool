@@ -14,6 +14,30 @@ Una suite de herramientas de QA y productividad diseñada específicamente para 
 5. Selecciona la carpeta raíz que contiene el archivo `manifest.json`.
 6. ¡Listo! Fija la extensión en tu barra de herramientas para un acceso rápido.
 
+## 🏗️ Arquitectura de Carpetas
+
+```text
+vml-content-tool/
+├── manifest.json                  # Configuración (Manifest V3)
+├── assets/
+│   └── logo-vml.png               # Branding
+├── core/
+│   ├── content.css                # Estilos inyectados
+│   ├── popup.css                  # Estilos de la UI
+│   ├── popup.html                 # UI principal del popup
+│   └── popup-ui.js                # Helper principal de UI
+├── modules/
+│   ├── aem-switcher/              # Módulo: AEM Quick Switcher
+│   ├── disclouse-finder/          # Módulo: Exact Disclosure Finder
+│   ├── htags-visualizer/          # Módulo: HTag Visualizer
+│   ├── nbsp-visualizer/           # Módulo: NBSP Detector
+│   ├── vdm-equipment-creator/     # Módulo: VDM Equipment Mass Creator
+│   ├── vdm-options-autofiller/    # Módulo: VDM Options Autofiller
+│   └── vdm-specs-autofiller/      # Módulo: Specs VDM Autofiller
+├── .antigravityrules              # Reglas de Agente AI
+└── Readme.md                      # Documentación del usuario
+```
+
 ## ⚙️ Uso
 
 ### 1. AEM Quick Switcher
