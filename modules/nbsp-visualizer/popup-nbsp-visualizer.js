@@ -14,10 +14,10 @@ function updateNbspUI(isActive) {
 
   if (isActive) {
     statusDot.classList.add('on');
-    statusLabel.textContent = 'ENCENDIDO';
+    statusLabel.textContent = 'ON';
   } else {
     statusDot.classList.remove('on');
-    statusLabel.textContent = 'APAGADO';
+    statusLabel.textContent = 'OFF';
   }
 }
 

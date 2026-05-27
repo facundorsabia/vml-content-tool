@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -13,175 +13,292 @@
     <img src="../assets/logo-vml.png" alt="VML" class="header-logo">
     <div class="header-info">
       <h1 class="header-title">VML Content Tool</h1>
-      <p class="header-version">v2.0 - Internal Release</p>
+      <p class="header-version" id="appVersion">v2.0 - Internal Release</p>
     </div>
   </div>
 
-  <!-- Main Content: Accordion layout -->
-  <div class="main-content">
-
-    <!-- Module 1: AEM Quick Switcher -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">1. AEM Quick Switcher</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-          <div class="aem-controls" style="display: flex; flex-direction: column; gap: 10px;">
-            <button id="btnAemEditor" class="btn-search">VAP ➔ EDITOR</button>
-            <button id="btnAemAssets" class="btn-search">CF Editor ➔ Admin</button>
-          </div>
-          <p id="aemError" style="color: #ff4444; font-size: 12px; margin-top: 10px; display: none;"></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Module 2: NBSP Detector -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">2. NBSP Detector</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-          <div class="field-group">
-            <label class="field-label">Estado</label>
-            <div class="status-row">
-              <div class="status-display" id="statusDisplay">
-                <span class="status-dot" id="statusDot"></span>
-                <span class="status-text" id="statusLabel">APAGADO</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="statusCheckbox">
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Module 3: HTag Visualizer -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">3. HTag Visualizer</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-          <div class="field-group">
-            <label class="field-label">Estado</label>
-            <div class="status-row">
-              <div class="status-display" id="htagStatusDisplay">
-                <span class="status-dot" id="htagStatusDot"></span>
-                <span class="status-text" id="htagStatusLabel">APAGADO</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="htagStatusCheckbox">
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Module 4: Exact Disclosure Finder -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">4. Exact Disclosure Finder</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-          <textarea id="searchInput"
-            placeholder='Busca el disclouse - no lo encontrará si tiene palabras o frases extra.' rows="3"></textarea>
-
-          <div class="finder-controls">
-            <button id="searchBtn" class="btn-search">BUSCAR</button>
-            <div class="results-info">
-              <span class="results-label">RESULTADOS:</span>
-              <strong id="resultsCount" class="results-number">0</strong>
-            </div>
-          </div>
-
-          <div class="finder-nav">
-            <button id="prevMatch" class="btn-nav" title="Anterior">&#9650;</button>
-            <button id="nextMatch" class="btn-nav" title="Siguiente">&#9660;</button>
-            <span class="nav-page">Pág. <strong id="currentMatch">0</strong> / <strong
-                id="totalMatches">0</strong></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Module 5: VDM Specs Autofiller -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">5. VDM Specs Autofiller</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-          <textarea id="autofillInput" placeholder="Pega las celdas desde Excel aquí..." rows="5"></textarea>
-
-          <div class="autofill-controls">
-            <button id="btnAutofill" class="btn-search">AUTOCOMPLETAR TABLA</button>
-          </div>
-
-          <p id="autofillStatus" class="autofill-status" style="display: none;"></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Module 6: VDM Options Autofiller -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">6. VDM Options Autofiller</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-
-          <textarea id="dropdownInput" placeholder="Pega las celdas desde Excel aquí..." rows="3"></textarea>
-
-          <button id="btnApplyDropdown" class="btn-search" style="width: 100%;">APLICAR EN DROPDOWNS</button>
-
-          <p id="dropdownStatus" class="autofill-status" style="display: none; margin-top: 10px;"></p>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Module 7: VDM EQUIPMENT MASS CREATOR -->
-    <div class="accordion-item">
-      <div class="accordion-header">
-        <h2 class="module-title">7. VDM EQUIPMENT MASS CREATOR</h2>
-        <span class="accordion-icon">&#9662;</span>
-      </div>
-      <div class="accordion-content">
-        <div class="accordion-inner">
-
-          <textarea id="vdmEquipmentInput" placeholder="Pega las columnas: [Categoría] [Título]..." rows="5"></textarea>
-
-          <button id="btnCreateEquipments" class="btn-search" style="width: 100%; margin-top: 10px;">CREAR
-            EQUIPAMIENTOS</button>
-
-          <p id="vdmEquipmentStatus" class="autofill-status" style="display: none; margin-top: 10px; font-size: 12px;">
-          </p>
-
-        </div>
-      </div>
-    </div>
-
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="productivity" id="tab-productivity">
+      <span class="tab-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </span>
+      <span class="tab-label">Productivity</span>
+    </button>
+    <button class="tab-btn" data-tab="qa-audit" id="tab-qa-audit">
+      <span class="tab-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </span>
+      <span class="tab-label">QA & Audit</span>
+    </button>
+    <button class="tab-btn" data-tab="automation" id="tab-automation">
+      <span class="tab-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="12" y1="16" x2="12" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+      </span>
+      <span class="tab-label">Automation<br>&amp; Bots</span>
+    </button>
   </div>
+
+  <!-- Tab Panels -->
+  <div class="tab-panels">
+
+    <!-- ===================== TAB: PRODUCTIVITY ===================== -->
+    <div class="tab-panel active" data-panel="productivity">
+
+      <!-- Module 1: AEM Quick Switcher -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--aem">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">AEM Quick Switcher</h3>
+              <p class="module-desc">Quickly switch between AEM environments.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Fast Access</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Productivity</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <div class="aem-controls" style="display: flex; flex-direction: column; gap: 10px;">
+              <button id="btnAemEditor" class="btn-search">VAP ➔ EDITOR</button>
+              <button id="btnAemAssets" class="btn-search">CF Editor ➔ Admin</button>
+            </div>
+            <p id="aemError" style="color: #ff4444; font-size: 12px; margin-top: 10px; display: none;"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 4: Exact Disclosure Finder -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--finder">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">Exact Disclosure Finder</h3>
+              <p class="module-desc">Find exact matches of disclosure text across the content.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Compliance</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="searchInput"
+              placeholder="Search for the disclosure - it won't be found if it has extra words or phrases." rows="3"></textarea>
+
+            <div class="finder-controls">
+              <button id="searchBtn" class="btn-search">SEARCH</button>
+              <div class="results-info">
+                <span class="results-label">RESULTS:</span>
+                <strong id="resultsCount" class="results-number">0</strong>
+              </div>
+            </div>
+
+            <div class="finder-nav">
+              <button id="prevMatch" class="btn-nav" title="Previous">&#9650;</button>
+              <button id="nextMatch" class="btn-nav" title="Next">&#9660;</button>
+              <span class="nav-page">Page <strong id="currentMatch">0</strong> / <strong
+                  id="totalMatches">0</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-panel productivity -->
+
+    <!-- ===================== TAB: QA & AUDIT ===================== -->
+    <div class="tab-panel" data-panel="qa-audit">
+
+      <!-- Module 2: NBSP Detector -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--nbsp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">NBSP Detector</h3>
+              <p class="module-desc">Highlight non-breaking spaces on the current page.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Inspector</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>QA</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <div class="field-group">
+              <label class="field-label">Status</label>
+              <div class="status-row">
+                <div class="status-display" id="statusDisplay">
+                  <span class="status-dot" id="statusDot"></span>
+                  <span class="status-text" id="statusLabel">OFF</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="statusCheckbox">
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 3: HTag Visualizer -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--htag">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">HTag Visualizer</h3>
+              <p class="module-desc">Overlay heading structure labels on the page.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>Structure</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>QA</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <div class="field-group">
+              <label class="field-label">Status</label>
+              <div class="status-row">
+                <div class="status-display" id="htagStatusDisplay">
+                  <span class="status-dot" id="htagStatusDot"></span>
+                  <span class="status-text" id="htagStatusLabel">OFF</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="htagStatusCheckbox">
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-panel qa-audit -->
+
+    <!-- ===================== TAB: AUTOMATION & BOTS ===================== -->
+    <div class="tab-panel" data-panel="automation">
+
+      <!-- Module 5: VDM Specs Autofiller -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--vdm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">VDM Specs Autofiller</h3>
+              <p class="module-desc">Paste Excel cells to auto-complete the specs table.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>Bot</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>VDM</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="autofillInput" placeholder="Paste Excel cells here..." rows="5"></textarea>
+
+            <div class="autofill-controls">
+              <button id="btnAutofill" class="btn-search">AUTOFILL TABLE</button>
+            </div>
+
+            <p id="autofillStatus" class="autofill-status" style="display: none;"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 6: VDM Options Autofiller -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--vdm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">VDM Options Autofiller</h3>
+              <p class="module-desc">Apply Excel data to dropdown fields automatically.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>Bot</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>VDM</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="dropdownInput" placeholder="Paste Excel cells here..." rows="3"></textarea>
+
+            <button id="btnApplyDropdown" class="btn-search" style="width: 100%;">APPLY TO DROPDOWNS</button>
+
+            <p id="dropdownStatus" class="autofill-status" style="display: none; margin-top: 10px;"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 7: VDM Equipment Mass Creator -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--vdm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">VDM Equipment Mass Creator</h3>
+              <p class="module-desc">Bulk create equipment entries from Excel data.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>Bot</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>VDM</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="vdmEquipmentInput" placeholder="Paste columns: [Category] [Title]..." rows="5"></textarea>
+
+            <button id="btnCreateEquipments" class="btn-search" style="width: 100%; margin-top: 10px;">CREATE
+              EQUIPMENTS</button>
+
+            <p id="vdmEquipmentStatus" class="autofill-status" style="display: none; margin-top: 10px; font-size: 12px;">
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-panel automation -->
+
+  </div><!-- /tab-panels -->
 
   <!-- Footer: VML Branding -->
   <div class="footer">
     <img src="../assets/logo-vml.png" alt="VML" class="footer-logo">
     <div class="footer-info">
-      <span class="footer-label">DESARROLLADO EN:</span>
+      <span class="footer-label">DEVELOPED BY:</span>
       <strong class="footer-brand">VML ARGENTINA - ENGINEERING TEAM</strong>
     </div>
   </div>

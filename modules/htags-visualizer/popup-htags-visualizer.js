@@ -14,10 +14,10 @@ function updateHtagUI(isActive) {
 
   if (isActive) {
     htagStatusDot.classList.add('on');
-    htagStatusLabel.textContent = 'ENCENDIDO';
+    htagStatusLabel.textContent = 'ON';
   } else {
     htagStatusDot.classList.remove('on');
-    htagStatusLabel.textContent = 'APAGADO';
+    htagStatusLabel.textContent = 'OFF';
   }
 }
 
