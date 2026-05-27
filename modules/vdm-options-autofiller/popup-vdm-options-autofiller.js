@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   btn.addEventListener('click', async () => {
     const rawValue = inputEl.value.replace(/\u00A0/g, ' ');
     if (!rawValue || rawValue.trim().length === 0) {
-      showStatus('error', 'El campo de texto está vacío.');
+      showStatus('error', 'Text field is empty.');
       return;
     }
 
@@ -24,12 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const matrixData = lines.map(line => line.includes('\t') ? line.split('\t') : line.trim().split(/\s+/));
 
     btn.disabled = true;
-    btn.textContent = 'PROCESANDO...';
-    showStatus('info', 'Completando...');
+    btn.textContent = 'PROCESSING...';
+    showStatus('info', 'Filling...');
 
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab || !tab.id) throw new Error('No se pudo acceder a la pestaña activa.');
+      if (!tab || !tab.id) throw new Error('Could not access the active tab.');
 
       const frames = await chrome.webNavigation.getAllFrames({ tabId: tab.id });
       let responsesCount = 0;
@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { action: 'autoFillDropdowns', data: matrixData }, 
           { frameId: frame.frameId }, 
           (response) => {
-            // Manejo de errores de conexión silenciado
+            // Silent connection error handling
             if (chrome.runtime.lastError) {
-              // El frame no tiene el listener, es normal en AEM
+              // The frame doesn't have the listener, this is normal in AEM
             } else if (response && response.success) {
               successTargeted = true;
             }
@@ -51,17 +51,17 @@ document.addEventListener('DOMContentLoaded', () => {
             responsesCount++;
             if (responsesCount === frames.length) {
               btn.disabled = false;
-              btn.textContent = 'APLICAR EN DROPDOWNS';
+              btn.textContent = 'APPLY TO DROPDOWNS';
               successTargeted 
-                ? showStatus('success', '✔ ¡Celdas autocompletadas!') 
-                : showStatus('error', 'No se detectó la tabla de opciones en AEM.');
+                ? showStatus('success', '✔ Cells autofilled!') 
+                : showStatus('error', 'Options table not detected in AEM.');
             }
           }
         );
       });
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'APLICAR EN DROPDOWNS';
+      btn.textContent = 'APPLY TO DROPDOWNS';
       showStatus('error', 'Error: ' + err.message);
     }
   });

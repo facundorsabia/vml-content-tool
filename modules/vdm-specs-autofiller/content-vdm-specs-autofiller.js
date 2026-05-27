@@ -197,7 +197,7 @@ async function fillSpecTable(data) {
         injectValueIntoQuillEditor(editors[j], valueToInject);
         filled++;
       } catch (err) {
-        console.warn(`[VML Autofiller] Error en fila ${i}, col ${j}:`, err);
+        console.warn(`[VML Autofiller] Error in row ${i}, col ${j}:`, err);
         skipped++;
       }
 

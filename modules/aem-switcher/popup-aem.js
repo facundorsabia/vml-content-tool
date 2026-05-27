@@ -16,20 +16,20 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab || !tab.url) {
-        showError("No se pudo obtener la URL actual.");
+        showError("Could not obtain current URL.");
         return;
       }
       
       const u = tab.url.split(".com/");
       if (u.length < 2) {
-        showError("La URL actual no parece ser válida para VAP ➔ Editor.");
+        showError("Current URL does not appear to be valid for VAP ➔ Editor.");
         return;
       }
       
       const newUrl = u[0] + ".com/ui#/aem/editor.html/" + u[1].split("?")[0];
       chrome.tabs.create({ url: newUrl });
     } catch (err) {
-      showError("Error al ejecutar el switch.");
+      showError("Error executing switch.");
       console.error(err);
     }
   });
@@ -39,26 +39,26 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab || !tab.url) {
-        showError("No se pudo obtener la URL actual.");
+        showError("Could not obtain current URL.");
         return;
       }
 
       const u = tab.url.split("/content/dam/");
       if (u.length < 2) {
-        showError("La URL no contiene /content/dam/.");
+        showError("URL does not contain /content/dam/.");
         return;
       }
 
       const path = u[1].split("/");
-      path.pop(); // Elimina el archivo
-      path.pop(); // Sube un nivel de carpeta
+      path.pop(); // Remove file
+      path.pop(); // Go up one folder level
       
       const origin = new URL(tab.url).origin;
       const newUrl = origin + "/ui#/aem/assets.html/content/dam/" + path.join("/");
       
       chrome.tabs.create({ url: newUrl });
     } catch (err) {
-      showError("Error al ejecutar el switch.");
+      showError("Error executing switch.");
       console.error(err);
     }
   });

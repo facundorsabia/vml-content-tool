@@ -111,7 +111,7 @@ async function getCsrfToken() {
     const json = await response.json();
     return json.token;
   } catch (err) {
-    console.error('Error obteniendo token CSRF', err);
+    console.error('Error obtaining CSRF token', err);
     return null;
   }
 }
@@ -162,7 +162,7 @@ async function createEquipments(data) {
 
   const csrfToken = await getCsrfToken();
   if (!csrfToken) {
-    throw new Error("No se pudo obtener el token CSRF de AEM. Revisa tu sesión.");
+    throw new Error("Could not obtain AEM CSRF token. Check your session.");
   }
 
   const targetPath = getTargetUrl();
@@ -170,17 +170,17 @@ async function createEquipments(data) {
   // para que la operacion "import" con :nameHint funcione correctamente.
   const url = targetPath.endsWith('/') ? targetPath.slice(0, -1) : targetPath;
 
-  console.log(`Iniciando creación en la ruta: ${url}`);
+  console.log(`Starting creation at path: ${url}`);
 
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
-    let categoriaExcel = row[0] ? row[0].trim() : "";
+    let categoriaExcel = row[0] !== null ? row[0].trim() : null;
     let tituloExcel = row[1] ? row[1].trim() : "";
 
     // Detección automática del orden de las columnas:
     // Si la segunda columna es una categoría válida y la primera no lo es (o viceversa),
     // corregimos inteligentemente el orden de pegado inverso [Título] [Categoría]
-    if (tituloExcel && CATEGORY_MAP[tituloExcel] !== undefined && CATEGORY_MAP[categoriaExcel] === undefined) {
+    if (tituloExcel && CATEGORY_MAP[tituloExcel] !== undefined && categoriaExcel !== null && CATEGORY_MAP[categoriaExcel] === undefined) {
       const temp = categoriaExcel;
       categoriaExcel = tituloExcel;
       tituloExcel = temp;
@@ -190,10 +190,13 @@ async function createEquipments(data) {
 
     const idNormalizado = normalizeTitle(tituloExcel);
     
-    let categoriaMapped = CATEGORY_MAP[categoriaExcel];
-    if (categoriaMapped === undefined) {
-      console.warn(`Categoría no encontrada en mapa: "${categoriaExcel}". Usando "" como fallback.`);
-      categoriaMapped = "";
+    let categoriaMapped = null;
+    if (categoriaExcel !== null) {
+      categoriaMapped = CATEGORY_MAP[categoriaExcel];
+      if (categoriaMapped === undefined) {
+        console.warn(`Category not found in map: "${categoriaExcel}". Using "" as fallback.`);
+        categoriaMapped = "";
+      }
     }
 
     const formData = new FormData();
@@ -208,9 +211,13 @@ async function createEquipments(data) {
       "vdm:type": "resource",
       "vdm:resourceType": "element",
       "name": tituloExcel,
-      "headline": tituloExcel,
-      "vdm:cat": categoriaMapped
+      "headline": tituloExcel
     };
+
+    if (categoriaMapped !== null) {
+      contenidoNodo["vdm:cat"] = categoriaMapped;
+    }
+
     formData.append(':content', JSON.stringify(contenidoNodo));
 
     try {
@@ -223,12 +230,12 @@ async function createEquipments(data) {
       });
 
       if (!response.ok) {
-        console.error(`Error al crear "${tituloExcel}": ${response.statusText}`);
+        console.error(`Error creating "${tituloExcel}": ${response.statusText}`);
       } else {
-        console.log(`Equipo creado exitosamente: "${tituloExcel}" (${idNormalizado})`);
+        console.log(`Equipment successfully created: "${tituloExcel}" (${idNormalizado})`);
       }
     } catch (err) {
-      console.error(`Error de red al crear "${tituloExcel}"`, err);
+      console.error(`Network error while creating "${tituloExcel}"`, err);
     }
 
     // Send progress update

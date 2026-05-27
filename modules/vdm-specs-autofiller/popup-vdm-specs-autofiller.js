@@ -34,38 +34,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const raw = textarea.value.replace(/\u00A0/g, ' ');
 
     if (!raw || raw.trim().length === 0) {
-      showStatus('error', 'El textarea está vacío. Pegá las celdas desde Excel.');
+      showStatus('error', 'Textarea is empty. Paste cells from Excel.');
       return;
     }
 
     const data = parseTSV(raw);
 
     if (data.length === 0) {
-      showStatus('error', 'No se pudieron parsear datos válidos del texto pegado.');
+      showStatus('error', 'Could not parse valid data from pasted text.');
       return;
     }
 
     // Feedback visual: mostrar que se está procesando
     btn.disabled = true;
-    btn.textContent = 'PROCESANDO...';
-    showStatus('info', `Enviando ${data.length} fila(s) al content script...`);
+    btn.textContent = 'PROCESSING...';
+    showStatus('info', `Sending ${data.length} row(s) to content script...`);
 
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
       if (!tab || !tab.id) {
-        showStatus('error', 'No se pudo acceder a la pestaña activa.');
+        showStatus('error', 'Could not access the active tab.');
         btn.disabled = false;
-        btn.textContent = 'AUTOCOMPLETAR TABLA';
+        btn.textContent = 'AUTOFILL TABLE';
         return;
       }
 
       // Verificar que la URL sea válida (no chrome://, about:, etc.)
       const url = tab.url || '';
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        showStatus('error', 'Esta función solo funciona en páginas web (http/https).');
+        showStatus('error', 'This feature only works on web pages (http/https).');
         btn.disabled = false;
-        btn.textContent = 'AUTOCOMPLETAR TABLA';
+        btn.textContent = 'AUTOFILL TABLE';
         return;
       }
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
           files: ['content/content-autofiller.js']
         });
       } catch (injectErr) {
-        console.warn('Inyección de script omitida o fallida:', injectErr);
+        console.warn('Script injection skipped or failed:', injectErr);
         // Continuamos de todas formas por si ya estaba inyectado
       }
 
@@ -85,31 +85,31 @@ document.addEventListener('DOMContentLoaded', () => {
         data: data
       }, (response) => {
         btn.disabled = false;
-        btn.textContent = 'AUTOCOMPLETAR TABLA';
+        btn.textContent = 'AUTOFILL TABLE';
 
         if (chrome.runtime.lastError) {
-          showStatus('error', 'Error de comunicación: Por favor recargá la página de AEM (F5) e intentá de nuevo.');
+          showStatus('error', 'Communication error: Please reload the AEM page (F5) and try again.');
           return;
         }
 
         if (!response) {
-          showStatus('error', 'Sin respuesta del content script. ¿Está abierta una página AEM?');
+          showStatus('error', 'No response from content script. Is an AEM page open?');
           return;
         }
 
         if (response.success) {
           showStatus('success',
-            `✔ Completado: ${response.filled} celda(s) rellenada(s), ${response.skipped} omitida(s).`
+            `✔ Completed: ${response.filled} cell(s) filled, ${response.skipped} skipped.`
           );
         } else {
-          showStatus('error', response.error || 'Error desconocido al rellenar la tabla.');
+          showStatus('error', response.error || 'Unknown error while filling table.');
         }
       });
 
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'AUTOCOMPLETAR TABLA';
-      showStatus('error', 'Error inesperado: ' + err.message);
+      btn.textContent = 'AUTOFILL TABLE';
+      showStatus('error', 'Unexpected error: ' + err.message);
     }
   });
 });
