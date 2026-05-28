@@ -38,7 +38,13 @@ function injectValueIntoSelect(selectEl, value) {
 }
 
 function findOptionRows(root) {
-  let validRows = Array.from(root.querySelectorAll('tr.options--item')).filter(row => row.children.length > 4);
+  let validRows = Array.from(root.querySelectorAll('tr.options--item')).filter(row => {
+    if (row.children.length <= 4) return false;
+    
+    // Solo procesar filas que sean actualmente visibles en la página
+    const rect = row.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  });
 
   root.querySelectorAll('iframe').forEach(iframe => {
     try {
@@ -57,11 +63,6 @@ async function fillDropdowns(matrixData) {
     const domRow = rows[i];
     const excelRow = matrixData[i];
 
-    // Highlight visual de fila
-    const originalBg = domRow.style.backgroundColor;
-    domRow.style.transition = 'background-color 0.2s ease';
-    domRow.style.backgroundColor = 'rgba(255, 68, 68, 0.2)';
-
     // Trigger para renderizado
     (domRow.children[1] || domRow).click();
     await new Promise(r => setTimeout(r, 250));
@@ -72,24 +73,17 @@ async function fillDropdowns(matrixData) {
     for (let j = 0; j < Math.min(selects.length, excelRow.length - excelOffset); j++) {
       const targetSelect = selects[j];
       const val = excelRow[j + excelOffset]?.trim() || '';
-      
-      // Highlight visual de celda individual
-      const originalShadow = targetSelect.style.boxShadow;
-      targetSelect.style.boxShadow = '0 0 0 2px #ff4444';
 
       try {
         injectValueIntoSelect(targetSelect, val);
       } catch (err) {
         // Fallo silencioso en la inyección de una celda
-      } finally {
-        // Aseguramos la limpieza del highlight visual
-        await new Promise(r => setTimeout(r, 80));
-        targetSelect.style.boxShadow = originalShadow;
       }
+
+      // Delay para permitir que AEM procese el cambio
+      await new Promise(r => setTimeout(r, 80));
     }
     
-    // Limpieza de highlight de fila
-    domRow.style.backgroundColor = originalBg;
     await new Promise(r => setTimeout(r, 150));
   }
   return { success: true };
