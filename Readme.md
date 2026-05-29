@@ -31,6 +31,7 @@ vml-content-tool/
 │   ├── disclouse-finder/          # Módulo: Exact Disclosure Finder
 │   ├── htags-visualizer/          # Módulo: HTag Visualizer
 │   ├── nbsp-visualizer/           # Módulo: NBSP Detector
+│   ├── publish-path-generator/    # Módulo: Publish Path Generator
 │   ├── vdm-equipment-creator/     # Módulo: VDM Equipment Mass Creator
 │   ├── vdm-options-autofiller/    # Módulo: VDM Options Autofiller
 │   └── vdm-specs-autofiller/      # Módulo: Specs VDM Autofiller
@@ -85,6 +86,25 @@ vml-content-tool/
 * **Inyección de Red Directa**: Utiliza peticiones `fetch()` HTTP POST dirigidas a la API de Sling de AEM, heredando automáticamente las cookies de autenticación de tu navegador y requiriendo un token CSRF seguro que la extensión obtiene por ti en segundo plano.
 * **Detección de Columnas Inteligente (Anti-Error)**: Admite copiar de Excel las columnas `Option Category` y `Title` tanto en el orden convencional como de forma invertida (`[Título] [Categoría]`). La extensión detecta el orden correcto de forma dinámica haciendo una comprobación cruzada contra el diccionario estático de categorías de AEM y las corrige en memoria.
 * **Saneamiento Automático de Nombres (Node Hint)**: Las tildes, espacios múltiples, comillas dobles, pulgadas, diagonales y caracteres especiales de los títulos Excel se normalizan automáticamente a un formato alfanumérico seguro para generar la sugerencia de nombre (`:nameHint`) de Sling sin romper la API.
+
+### 8. Publish Path Generator
+* Diseñado para acelerar la creación de tickets de publicación para **Content Fragments**, **Experience Fragments**, **Pages**, **VDM Author** y **Assets** (imágenes, videos, documentos) en AEM.
+* **Copia Inteligente de URL**:
+  - Para *Content Fragments*: Convierte la URL del editor (`/editor.html/content/dam/...`) a la carpeta contenedora en Assets (`/assets.html/content/dam/...`) eliminando el último segmento de la URL.
+  - Para *Experience Fragments*: Convierte la URL del editor (`ui#/aem/editor.html/content/experience-fragments/...`) a la carpeta contenedora (`/aem/experience-fragments.html/content/experience-fragments/...`) eliminando la variación final (ej. `master.html`).
+  - Para *Pages*: Convierte la URL del editor (`ui#/aem/editor.html/content/...`) a la carpeta contenedora en Sites (`/sites.html/content/...`) eliminando el nombre de página final (ej. `f-rodriguez.html`).
+  - Para *VDM Author*: Convierte la URL del editor (`/aem/vdm.html/edit/content/...`) a la consola contenedora en browse (`/aem/vdm.html/browse/content/...`) eliminando la última sección contextual (ej. `/options`).
+  - Para *Assets* (Automático y Manual): Convierte el path del asset (`/content/dam/.../imagen.jpg`) a la URL de su carpeta contenedora en Assets DAM (`/assets.html/content/dam/...`) eliminando el nombre del archivo.
+* **Detección Automática Híbrida de Assets**: Al abrir el módulo, la extensión realiza una búsqueda en segundo plano en dos etapas:
+  - **DOM Scanner**: Escanea los inputs/textareas editables del DOM buscando paths `/content/dam/` con extensión.
+  - **Sling JCR API Query**: Realiza una petición asíncrona al repositorio JCR del Content Fragment (`/content/dam/....3.json`) capturando de forma invisible y garantizada todos los assets del fragmento, resolviendo el problema de campos que aún no han sido renderizados o se encuentran en pestañas no activas (ej. la pestaña "Asset" del fragmento).
+  - **Indicador de Estado en Tiempo Real**: Esta sección cuenta con un elegante badge indicador de estado en su cabecera (`Scanning...` en ámbar, `Auto-Detected` en púrpura, o `Not Detected` en rojo) que refleja el resultado del escaneo de assets en tiempo real. Adicionalmente, cada fila de la lista se decora con un tag visual `Auto` para certificar su detección directa.
+* **Copia Manual de Assets**: Cuenta con un área de texto dedicada para pegar de forma manual cualquier path de asset (ej. copiado de Excel) y generar su path formateado.
+* **Extracción de Título o Nombre Nativo**: 
+  - Para CFs y XFs: Captura el título real desde el DOM (`div.cfm-editor-title-fragment` o `div.editor-GlobalBar-pageTitle`).
+  - Para VDM Author: Captura la sección activa (ej. `Options`, `Equipments`, `Specs`) desde el dropdown selector del header (`.vdm-app-header .b-nav-dropdown > a > span`).
+  - Para Pages y Assets: Extrae el nombre o archivo directamente del final del path (eliminando la extensión `.html` si aplica).
+* **Formato Listo para Tickets**: Copia al portapapeles una cadena formateada con la URL de la carpeta padre seguida de `>>> [Título/Nombre]`, lista para ser pegada en tus tickets de Jira o herramientas internas.
 
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
