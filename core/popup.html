@@ -156,6 +156,66 @@
         </div>
       </div>
 
+      <!-- Module 8: Publish Path Generator -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--publish-path">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <polyline points="16 6 12 2 8 6" />
+                <line x1="12" y1="2" x2="12" y2="15" />
+              </svg>
+            </div>
+            <div class="module-header-info">
+              <h3 class="module-title">Publish Path Generator</h3>
+              <p class="module-desc">Generate formatted assets path for ticket publication.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>Fast Copy</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>Productivity</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <div class="publish-path-controls" style="display: flex; flex-direction: column; gap: 10px;">
+              <button id="btnGeneratePublishPath" class="btn-search" style="width: 100%;">GENERATE PUBLISH PATH (PAGE/CF/XF/VDM)</button>
+            </div>
+            
+            <!-- Contenedor dinámico de assets detectados -->
+            <div id="detectedAssetsContainer" style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px;">
+              <label class="field-label" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <span>Detected Assets on Page</span>
+                <span id="assetDetectionStatus" class="asset-status-badge status-scanning">Scanning...</span>
+              </label>
+              <div id="detectedAssetsList" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;">
+                <!-- Dinámicamente llenado -->
+              </div>
+            </div>
+
+            <!-- Entrada manual de path de asset -->
+            <div class="field-group" style="margin-top: 14px; border-top: 1px solid var(--border); padding-top: 12px; margin-bottom: 0;">
+              <label class="field-label">Generate Asset Publish Path Manually</label>
+              <textarea id="manualAssetInput" placeholder="Paste asset path here (e.g. /content/dam/na/ford/en_us/images/.../file.tif)" rows="2"></textarea>
+              <button id="btnGenerateAssetPublishPath" class="btn-search" style="width: 100%; margin-top: 4px;">GENERATE ASSET PATH</button>
+            </div>
+
+            <p id="publishPathStatus" class="autofill-status" style="display: none; margin-top: 10px;"></p>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /tab-panel productivity -->
 
     <!-- ===================== TAB: QA & AUDIT ===================== -->
@@ -416,6 +476,7 @@
   <script src="../modules/htags-visualizer/popup-htags-visualizer.js"></script>
   <script src="../modules/vdm-options-autofiller/popup-vdm-options-autofiller.js"></script>
   <script src="../modules/vdm-equipment-creator/popup-vdm-equipment-creator.js"></script>
+  <script src="../modules/publish-path-generator/popup-publish-path-generator.js"></script>
 </body>
 
 </html>
