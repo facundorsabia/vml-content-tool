@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VML Content Tool",
-  "version": "3.4",
+  "version": "3.5",
   "description": "Suite de herramientas para Content Editors de VML.",
   "permissions": [
       "storage",

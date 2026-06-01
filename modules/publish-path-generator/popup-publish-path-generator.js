@@ -68,14 +68,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Validar si es una URL de AEM editor de Content Fragments, Experience Fragments, Pages o VDM Author
+      // Validar si es una URL de AEM editor de Content Fragments, Experience Fragments, Pages o VDM Author o una carpeta de AEM (Folder)
       const isContentFragment = tab.url.includes('/editor.html/content/dam/');
       const isExperienceFragment = tab.url.includes('/editor.html/content/experience-fragments/');
       const isVdm = tab.url.includes('/aem/vdm.html/edit/content/');
+      const isFolder = tab.url.includes('/content/') && !tab.url.includes('/editor.html/') && !tab.url.includes('/aem/vdm.html/edit/');
       const isPage = tab.url.includes('/editor.html/content/') && !isContentFragment && !isExperienceFragment;
 
-      if (!isContentFragment && !isExperienceFragment && !isPage && !isVdm) {
-        showMessage("Please open an AEM Content Fragment, Experience Fragment, Page, or VDM page in the Editor first.", true);
+      if (!isContentFragment && !isExperienceFragment && !isPage && !isVdm && !isFolder) {
+        showMessage("Please open an AEM Content Fragment, Experience Fragment, Page, VDM page, or an AEM Folder page first.", true);
         return;
       }
 
@@ -121,6 +122,53 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error(urlErr);
           btnGenerate.disabled = false;
         }
+      } else if (isFolder) {
+        showMessage("Extracting folder items...", false);
+        chrome.tabs.sendMessage(tab.id, { action: 'getFolderPublishPathDetails' }, (response) => {
+          btnGenerate.disabled = false;
+
+          if (chrome.runtime.lastError) {
+            showMessage("Error: Please reload the active AEM tab and try again.", true);
+            console.error(chrome.runtime.lastError);
+            return;
+          }
+
+          if (response?.error) {
+            showMessage(response.error, true);
+            return;
+          }
+
+          const items = response?.items || [];
+
+          if (items.length === 0) {
+            showMessage("No elements found in this folder.", true);
+            return;
+          }
+
+          try {
+            // Clean the folder URL (remove query parameters)
+            const publishUrl = tab.url.split('?')[0];
+            
+            // Format output: Folder URL followed by child titles
+            const formattedText = [
+              publishUrl,
+              ...items.map(title => `>>> ${title}`)
+            ].join('\n');
+            
+            navigator.clipboard.writeText(formattedText)
+              .then(() => {
+                showMessage("Folder path & elements copied!");
+              })
+              .catch(err => {
+                showMessage("Failed to copy to clipboard.", true);
+                console.error(err);
+              });
+
+          } catch (urlErr) {
+            showMessage("Failed to parse folder URL structure.", true);
+            console.error(urlErr);
+          }
+        });
       } else {
         // Para CFs, XFs y VDM, consultamos al content script para extraer el título de la UI
         showMessage("Extracting details...", false);

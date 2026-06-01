@@ -88,13 +88,14 @@ vml-content-tool/
 * **Saneamiento Automático de Nombres (Node Hint)**: Las tildes, espacios múltiples, comillas dobles, pulgadas, diagonales y caracteres especiales de los títulos Excel se normalizan automáticamente a un formato alfanumérico seguro para generar la sugerencia de nombre (`:nameHint`) de Sling sin romper la API.
 
 ### 8. Publish Path Generator
-* Diseñado para acelerar la creación de tickets de publicación para **Content Fragments**, **Experience Fragments**, **Pages**, **VDM Author** y **Assets** (imágenes, videos, documentos) en AEM.
+* Diseñado para acelerar la creación de tickets de publicación para **Content Fragments**, **Experience Fragments**, **Pages**, **VDM Author**, **Assets** (imágenes, videos, documentos) y **Carpetas de AEM (Assets, XFs, Sites, VDM)**.
 * **Copia Inteligente de URL**:
   - Para *Content Fragments*: Convierte la URL del editor (`/editor.html/content/dam/...`) a la carpeta contenedora en Assets (`/assets.html/content/dam/...`) eliminando el último segmento de la URL.
   - Para *Experience Fragments*: Convierte la URL del editor (`ui#/aem/editor.html/content/experience-fragments/...`) a la carpeta contenedora (`/aem/experience-fragments.html/content/experience-fragments/...`) eliminando la variación final (ej. `master.html`).
   - Para *Pages*: Convierte la URL del editor (`ui#/aem/editor.html/content/...`) a la carpeta contenedora en Sites (`/sites.html/content/...`) eliminando el nombre de página final (ej. `f-rodriguez.html`).
   - Para *VDM Author*: Convierte la URL del editor (`/aem/vdm.html/edit/content/...`) a la consola contenedora en browse (`/aem/vdm.html/browse/content/...`) eliminando la última sección contextual (ej. `/options`).
   - Para *Assets* (Automático y Manual): Convierte el path del asset (`/content/dam/.../imagen.jpg`) a la URL de su carpeta contenedora en Assets DAM (`/assets.html/content/dam/...`) eliminando el nombre del archivo.
+  - Para *Carpetas de AEM*: Estando parado sobre cualquier carpeta en consolas de AEM (Assets DAM, Experience Fragments, Sites o VDM), copia la URL limpia de la consola e incluye los títulos de todos los elementos contenidos en ella en formato de lista.
 * **Detección Automática Híbrida de Assets**: Al abrir el módulo, la extensión realiza una búsqueda en segundo plano en dos etapas:
   - **DOM Scanner**: Escanea los inputs/textareas editables del DOM buscando paths `/content/dam/` con extensión.
   - **Sling JCR API Query**: Realiza una petición asíncrona al repositorio JCR del Content Fragment (`/content/dam/....3.json`) capturando de forma invisible y garantizada todos los assets del fragmento, resolviendo el problema de campos que aún no han sido renderizados o se encuentran en pestañas no activas (ej. la pestaña "Asset" del fragmento).
@@ -104,6 +105,7 @@ vml-content-tool/
   - Para CFs y XFs: Captura el título real desde el DOM (`div.cfm-editor-title-fragment` o `div.editor-GlobalBar-pageTitle`).
   - Para VDM Author: Captura la sección activa (ej. `Options`, `Equipments`, `Specs`) desde el dropdown selector del header (`.vdm-app-header .b-nav-dropdown > a > span`).
   - Para Pages y Assets: Extrae el nombre o archivo directamente del final del path (eliminando la extensión `.html` si aplica).
+  - Para Carpetas de AEM: Extrae el título real (`dc:title` o `jcr:title`) de cada elemento hijo del repositorio JCR vía Sling API (con fallback de raspado del DOM si la llamada API fallara).
 * **Formato Listo para Tickets**: Copia al portapapeles una cadena formateada con la URL de la carpeta padre seguida de `>>> [Título/Nombre]`, lista para ser pegada en tus tickets de Jira o herramientas internas.
 
 -------------------------------------------------

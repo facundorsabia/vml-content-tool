@@ -146,5 +146,100 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ assets: uniqueAssets });
   }
 
+  if (request.action === 'getFolderPublishPathDetails') {
+    const url = window.location.href;
+    const contentPrefix = "/content/";
+    const isSitesFolder = url.includes('/sites.html/content/');
+
+    if (!url.includes(contentPrefix)) {
+      sendResponse({ error: "Not an AEM Folder page." });
+      return true;
+    }
+
+    try {
+      const parts = url.split(contentPrefix);
+      const cleanPath = parts[1].split('?')[0].split('#')[0];
+      const jcrPath = contentPrefix + cleanPath;
+
+      fetch(jcrPath + ".2.json")
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then(json => {
+          const items = [];
+          for (const key in json) {
+            if (json[key] && typeof json[key] === 'object' && !Array.isArray(json[key]) && key !== 'jcr:content') {
+              const child = json[key];
+              let title = "";
+              
+              if (isSitesFolder) {
+                // For Pages (Sites console), we want the JCR node name (key) directly
+                title = key;
+              } else {
+                // For Assets / Content Fragments / XF folders, we want the descriptive title
+                const dcTitle = child["jcr:content"]?.["metadata"]?.["dc:title"];
+                if (dcTitle) {
+                  title = Array.isArray(dcTitle) ? dcTitle[0] : dcTitle;
+                }
+                
+                if (!title && child["jcr:content"]?.["jcr:title"]) {
+                  title = child["jcr:content"]["jcr:title"];
+                }
+                
+                if (!title && child["jcr:title"]) {
+                  title = child["jcr:title"];
+                }
+                
+                if (!title) {
+                  title = key;
+                }
+              }
+              
+              items.push(title.trim());
+            }
+          }
+          sendResponse({ items: items, path: cleanPath });
+        })
+        .catch(err => {
+          console.warn("[VML Content Tool] Sling folder fetch failed, fallback to DOM scraping:", err);
+          // Fallback to DOM Scraping
+          const titles = new Set();
+          
+          if (isSitesFolder) {
+            // Target the page names from data-foundation-collection-item-id
+            document.querySelectorAll('[data-foundation-collection-item-id]').forEach(el => {
+              const path = el.getAttribute('data-foundation-collection-item-id');
+              if (path) {
+                const name = path.split('/').pop();
+                if (name && name !== 'jcr:content') titles.add(name);
+              }
+            });
+          } else {
+            const selectors = [
+              'coral-card-title',
+              '.coral3-Card-title',
+              '.foundation-collection-item [data-foundation-collection-item-title]',
+              '.coral3-Table-row .coral-Table-cell:nth-child(3)',
+              '.coral-ColumnView-item-label'
+            ];
+            
+            selectors.forEach(sel => {
+              document.querySelectorAll(sel).forEach(el => {
+                const text = el.textContent?.trim();
+                if (text) titles.add(text);
+              });
+            });
+          }
+          
+          sendResponse({ items: Array.from(titles), path: cleanPath });
+        });
+    } catch (e) {
+      console.error("[VML Content Tool] Failed to process folder publish path:", e);
+      sendResponse({ error: "Failed to parse folder structure." });
+    }
+    return true; // Keep channel open
+  }
+
   return true;
 });
