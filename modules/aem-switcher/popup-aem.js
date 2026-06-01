@@ -50,8 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const path = u[1].split("/");
-      path.pop(); // Remove file
-      path.pop(); // Go up one folder level
+      path.pop(); // Remove content fragment file name
       
       const origin = new URL(tab.url).origin;
       const newUrl = origin + "/ui#/aem/assets.html/content/dam/" + path.join("/");
