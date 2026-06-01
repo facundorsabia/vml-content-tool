@@ -144,6 +144,45 @@ function findTableRows(root) {
 }
 
 /**
+ * Corrección automática de formato de números para el mercado de US (Ford US).
+ * Convierte formatos regionales europeos/españoles (donde la coma es decimal y el punto es miles)
+ * al formato estándar estadounidense (punto es decimal, coma es miles).
+ *
+ * Casos contemplados:
+ * 1. Ambos (punto y coma): "12.345,67" -> "12,345.67"
+ * 2. Solo puntos (miles invertidos): "10.500" -> "10,500", "45.230" -> "45,230"
+ *    (Solo si el punto está seguido por exactamente 3 dígitos, ej. "3.5" no se toca)
+ * 3. Solo comas (decimales invertidos): "3,5" -> "3.5", "2,3" -> "2.3", "12,34" -> "12.34"
+ *    (Solo si la coma está seguida por 1 o 2 dígitos, para evitar alterar "10,500" que ya es US)
+ *
+ * @param {string} val - El texto de la celda a procesar
+ * @returns {string} - El texto corregido
+ */
+function correctNumberFormat(val) {
+  if (typeof val !== 'string') return val;
+
+  let result = val;
+
+  // Caso 1: Ambos punto(s) y coma. Ej: "12.345,67" -> "12,345.67"
+  const bothRegex = /\b\d{1,3}(?:\.\d{3})+,\d+\b/g;
+  result = result.replace(bothRegex, (match) => {
+    return match.replace(/\./g, 'TEMP_DOT').replace(/,/g, '.').replace(/TEMP_DOT/g, ',');
+  });
+
+  // Caso 2: Solo puntos que representan miles. Ej: "10.500" -> "10,500"
+  const onlyDotsRegex = /\b\d{1,3}(?:\.\d{3})+\b/g;
+  result = result.replace(onlyDotsRegex, (match) => {
+    return match.replace(/\./g, ',');
+  });
+
+  // Caso 3: Solo comas que representan decimales. Ej: "3,5" -> "3.5", "12,34" -> "12.34"
+  const onlyCommasRegex = /(\d+),(\d{1,2})(?!\d)/g;
+  result = result.replace(onlyCommasRegex, '$1.$2');
+
+  return result;
+}
+
+/**
  * Procesa la matriz de datos TSV y la inyecta en la tabla AEM.
  * Usa un enfoque secuencial con delays para dar tiempo a cada celda
  * de procesar los eventos antes de pasar a la siguiente.
@@ -191,7 +230,8 @@ async function fillSpecTable(data) {
       const cellValue = excelRow[j]; // Si j >= excelRow.length, será undefined
 
       // Si es undefined, lo tratamos como vacío para que limpie la celda de AEM
-      const valueToInject = (cellValue === undefined || cellValue === null) ? '' : cellValue.trim();
+      const rawValue = (cellValue === undefined || cellValue === null) ? '' : cellValue.trim();
+      const valueToInject = correctNumberFormat(rawValue);
 
       try {
         injectValueIntoQuillEditor(editors[j], valueToInject);

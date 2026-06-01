@@ -1023,4 +1023,129 @@ input[type="range"]::-moz-range-track {
     transform: rotate(360deg);
   }
 }
+
+/* ============================================
+   IN-APP DOCUMENTATION — Info Buttons & Tooltips
+   ============================================ */
+
+.module-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-btn {
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 14px;
+  height: 14px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  line-height: 1;
+  text-align: center;
+  flex-shrink: 0;
+  padding-bottom: 1px; /* Centrado visual fino para la letra i */
+}
+
+.info-btn:hover {
+  color: var(--accent-light);
+  border-color: var(--accent-light);
+  transform: scale(1.15);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.info-tooltip {
+  position: fixed;
+  z-index: 10000;
+  width: 290px;
+  background: rgba(13, 13, 13, 0.96);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 16px var(--accent-glow);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.96) translateY(4px);
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: none;
+}
+
+.info-tooltip.visible {
+  display: block;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.tooltip-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.tooltip-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.tooltip-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.tooltip-validations-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tooltip-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent-light);
+}
+
+.tooltip-validations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tooltip-validations-list li {
+  font-size: 10.5px;
+  color: var(--text-primary);
+  position: relative;
+  padding-left: 14px;
+  line-height: 1.35;
+}
+
+.tooltip-validations-list li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent-light);
+  font-size: 9px;
+}
+
 
