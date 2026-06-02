@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let responsesCount = 0;
       let successTargeted = false;
       let lastErrorMsg = '';
+      let missingList = [];
 
       frames.forEach((frame) => {
         chrome.tabs.sendMessage(
@@ -70,7 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
               if (response.success) {
                 successTargeted = true;
               } else if (response.error) {
-                lastErrorMsg = response.error;
+                if (response.error === 'missing_options' && response.missingTitles) {
+                  missingList = missingList.concat(response.missingTitles);
+                  lastErrorMsg = 'Validation failed: Equipments not found.';
+                } else {
+                  lastErrorMsg = response.error;
+                }
               }
             }
 
@@ -78,7 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (responsesCount === frames.length) {
               btn.disabled = false;
               btn.textContent = 'APPLY TO DROPDOWNS';
-              if (successTargeted) {
+              if (missingList.length > 0) {
+                const uniqueMissing = [...new Set(missingList)];
+                showStatus('error', '⚠️ Process aborted due to missing equipments.');
+                
+                const modal = document.getElementById('vmlModal');
+                document.getElementById('vmlModalText').innerText = "We couldn't find the following Equipments in the AEM table. Please review your list for typos or missing items:";
+                document.getElementById('vmlModalList').innerHTML = uniqueMissing.map(m => `<li>${m}</li>`).join('');
+                modal.style.display = 'flex';
+                
+                document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
+                document.getElementById('vmlModalOkBtn').onclick = () => modal.style.display = 'none';
+              } else if (successTargeted) {
                 showStatus('success', '✔ Cells autofilled!');
               } else if (lastErrorMsg) {
                 showStatus('error', lastErrorMsg);

@@ -162,12 +162,8 @@ async function fillDropdowns(matrixData) {
   }
 
   if (missingTitles.length > 0) {
-    let errorMsg = `"${missingTitles[0]}" not found in table`;
-    if (missingTitles.length > 1) {
-      errorMsg = `"${missingTitles[0]}" & others not found in table`;
-    }
     console.warn(`[VDM Options] Validation failed. Missing options: ${missingTitles.join(', ')}. Aborting.`);
-    return { success: false, error: errorMsg };
+    return { success: false, error: 'missing_options', missingTitles: missingTitles };
   }
 
   // 2. Filling pass (only runs if validation succeeded)
