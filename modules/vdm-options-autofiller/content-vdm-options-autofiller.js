@@ -38,7 +38,11 @@ function injectValueIntoSelect(selectEl, value) {
 }
 
 function findOptionRows(root) {
-  let validRows = Array.from(root.querySelectorAll('tr.options--item')).filter(row => row.children.length > 4);
+  let validRows = Array.from(root.querySelectorAll('tr.options--item')).filter(row => {
+    if (row.children.length <= 4) return false;
+    const rect = row.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  });
 
   root.querySelectorAll('iframe').forEach(iframe => {
     try {
