@@ -57,7 +57,10 @@ const MODULES_DOCUMENTATION = {
     title: "VDM Options Autofiller",
     description: "Autofill dropdown option fields automatically based on Excel copied data.",
     validations: [
-      "Searches and selects dropdown options automatically using text match algorithms."
+      "Requires copying the option title in the first column, followed by the options (S/O/empty).",
+      "Matches the target row in AEM using the option title to eliminate ordering errors.",
+      "Will not autofill if any row has no optionality on any trim (at least one 'S' or 'O' is required).",
+      "Will not autofill if it cannot match the copied titles with the options table 'Name' column."
     ]
   },
   equipmentCreator: {
@@ -65,6 +68,24 @@ const MODULES_DOCUMENTATION = {
     description: "Bulk create VDM equipment entries sequentially from tabular Excel data.",
     validations: [
       "Supports mass creation by copying columns `Option Category` & `Title` for US, or only `Title` for CA."
+    ]
+  },
+  categoryCreator: {
+    title: "VDM Category Creator",
+    description: "Bulk create and link categories and subcategories in the Options page from Excel data.",
+    validations: [
+      "Requires copying columns `Category`, `Subcategory`, and `Option` (three columns).",
+      "Reuses existing categories and subcategories on the page using smart case-insensitive matching.",
+      "Verifies that each option name corresponds to an existing equipment item created for the model in the JCR catalog, throwing an error if not found."
+    ]
+  },
+  moVdmProcess: {
+    title: "M&O VDM Process",
+    description: "Unified, sequential workflow to fully set up options and equipment in AEM VDM models.",
+    validations: [
+      "Step 1 (Equipment Creator): Bulk creates VDM equipment entries in collections/equipment.",
+      "Step 2 (Category Creator): Establishes the category/subcategory structures, linking options.",
+      "Step 3 (Options Autofiller): Injects specifications/selections (S/O/-) onto the options page grids, matching rows by the option title in the first column."
     ]
   }
 };

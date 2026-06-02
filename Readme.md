@@ -32,6 +32,7 @@ vml-content-tool/
 │   ├── htags-visualizer/          # Módulo: HTag Visualizer
 │   ├── nbsp-visualizer/           # Módulo: NBSP Detector
 │   ├── publish-path-generator/    # Módulo: Publish Path Generator
+│   ├── vdm-category-creator/      # Módulo: VDM Category Creator
 │   ├── vdm-equipment-creator/     # Módulo: VDM Equipment Mass Creator
 │   ├── vdm-options-autofiller/    # Módulo: VDM Options Autofiller
 │   └── vdm-specs-autofiller/      # Módulo: Specs VDM Autofiller
@@ -74,20 +75,31 @@ vml-content-tool/
 * **Feedback visual**: Muestra un resumen con la cantidad de celdas rellenadas y omitidas al finalizar.
 * **Protección XSS**: Los valores se sanitizan antes de inyectarlos, escapando entidades HTML.
 
-### 6. VDM Options Autofiller
-* Automatiza la carga masiva de datos en las tablas dinámicas de "Options" dentro de AEM.
-* **Soporte Multilínea (Matriz):** Seleccioná y copiá un bloque de celdas desde Excel (ej. 4 filas x 5 columnas) y pegalo en el área de texto de la extensión. Los guiones `-` se interpretan como celdas vacías y los valores `S` u `O` se seleccionan tal cual.
-* **Navegación Inteligente y Lazy Rendering:** Filtra automáticamente las filas de categorías de AEM y hace clic únicamente en las filas reales de opciones para forzar el renderizado de los selectores que están ocultos por rendimiento.
-* **Simulación Humana Extrema:** El bot despacha una secuencia precisa de eventos nativos (`mousedown`, `click`, `keydown`, `input`, `change`, `keyup`, `blur`, `focusout`) para engañar al estado de Vue y BootstrapVue, forzando el guardado automático de AEM.
-* **Feedback Visual Táctico:** Resalta temporalmente con un borde brillante el dropdown exacto que está siendo procesado en tiempo real, sin alterar los estilos base de la herramienta de autoría.
+### 6. M&O VDM Process
+Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para configurar por completo la estructura de equipamientos, categorías y opciones en AEM VDM:
 
-### 7. VDM Equipment Mass Creator
+#### 1. VDM Equipment Mass Creator
 * Permite crear masivamente equipamientos dentro de la carpeta correspondiente en AEM de manera directa y veloz, puenteando la pesada y lenta UI clásica.
 * **Inyección de Red Directa**: Utiliza peticiones `fetch()` HTTP POST dirigidas a la API de Sling de AEM, heredando automáticamente las cookies de autenticación de tu navegador y requiriendo un token CSRF seguro que la extensión obtiene por ti en segundo plano.
 * **Detección de Columnas Inteligente (Anti-Error)**: Admite copiar de Excel las columnas `Option Category` y `Title` tanto en el orden convencional como de forma invertida (`[Título] [Categoría]`). La extensión detecta el orden correcto de forma dinámica haciendo una comprobación cruzada contra el diccionario estático de categorías de AEM y las corrige en memoria.
 * **Saneamiento Automático de Nombres (Node Hint)**: Las tildes, espacios múltiples, comillas dobles, pulgadas, diagonales y caracteres especiales de los títulos Excel se normalizan automáticamente a un formato alfanumérico seguro para generar la sugerencia de nombre (`:nameHint`) de Sling sin romper la API.
 
-### 8. Publish Path Generator
+#### 2. VDM Category Creator
+* Permite crear masivamente categorías y subcategorías dentro del nodo de "Options" en AEM, asociando opcionalmente referencias de equipamientos existentes.
+* **Integración Directa con la API de Sling**: Al igual que el creador de equipamiento, realiza operaciones `fetch()` HTTP POST en segundo plano para importar un árbol JSON JCR completo de forma transaccional.
+* **Evita Duplicados Inteligente**: Antes de importar, el bot consulta la estructura JCR actual (tanto a nivel raíz como bajo `jcr:content`) y comprueba de forma insensible a mayúsculas/minúsculas o formato de clave JCR si la categoría o subcategoría ya existe. Si existe, los nuevos elementos se agregan de forma segura dentro de la estructura ya creada sin duplicar nodos.
+* **Soporte de Entrada de 3 Columnas**: Diseñado para copiar directamente de Excel un rango de tres columnas en formato: `[Categoría] \t [Subcategoría] \t [Opción/Equipamiento]`.
+* **Validación de Equipamiento en AEM**: Antes de iniciar la creación del árbol, el módulo verifica el catálogo JCR del modelo (`/collections/equipment`) comprobando que cada una de las opciones ingresadas corresponda a un equipamiento ya creado para dicho vehículo. Si una opción no existe en AEM, la ejecución se interrumpe y se muestra un error informando cuál elemento debe ser creado primero.
+
+#### 3. VDM Options Autofiller
+* Automatiza la carga masiva de datos en las tablas dinámicas de "Options" dentro de AEM.
+* **Mapeo por Título (Evita errores de orden)**: Requiere obligatoriamente que la primera columna contenga el título de la opción (`Title`). El bot buscará de manera inteligente y dinámica el elemento correspondiente en la tabla de AEM antes de rellenar las columnas `S - O - vacío` de la fila, asegurando una coincidencia exacta sin importar el orden de los elementos.
+* **Soporte Multilínea (Matriz):** Seleccioná y copiá un bloque de celdas desde Excel (ej. 4 filas x 5 columnas) y pegalo en el área de texto de la extensión. Los guiones `-` se interpretan como celdas vacías y los valores `S` u `O` se seleccionan tal cual.
+* **Navegación Inteligente y Lazy Rendering:** Filtra automáticamente las filas de categorías de AEM y hace clic únicamente en las filas reales de opciones para forzar el renderizado de los selectores que están ocultos por rendimiento.
+* **Simulación Humana Extrema:** El bot despacha una secuencia precisa de eventos nativos (`mousedown`, `click`, `keydown`, `input`, `change`, `keyup`, `blur`, `focusout`) para engañar al estado de Vue y BootstrapVue, forzando el guardado automático de AEM.
+* **Feedback Visual Táctico:** Resalta temporalmente con un borde brillante el dropdown exacto que está siendo procesado en tiempo real, sin alterar los estilos base de la herramienta de autoría.
+
+### 7. Publish Path Generator
 * Diseñado para acelerar la creación de tickets de publicación para **Content Fragments**, **Experience Fragments**, **Pages**, **VDM Author**, **Assets** (imágenes, videos, documentos) y **Carpetas de AEM (Assets, XFs, Sites, VDM)**.
 * **Copia Inteligente de URL**:
   - Para *Content Fragments*: Convierte la URL del editor (`/editor.html/content/dam/...`) a la carpeta contenedora en Assets (`/assets.html/content/dam/...`) eliminando el último segmento de la URL.
@@ -120,3 +132,7 @@ Esta extensión ha sido desarrollada siguiendo estrictamente los altos estándar
 5. **Isolated World**: El script opera en un mundo aislado provisto por Chrome, garantizando que no pueda interferir con la lógica de negocio ni acceder a variables globales del sitio web.
 6. **Permisos Mínimos**: Se utiliza `storage` para persistir preferencias y `activeTab` para validar la seguridad de la página antes de iniciar una búsqueda, evitando errores en páginas internas de Chrome.
 7. **Cumplimiento Interno**: Diseñada para auditoría visual y QA. Se recomienda mantener la herramienta en estado OFF al manipular información transaccional sensible en producción.
+
+
+> [!IMPORTANT]
+> **AI Agent System Prompt:** All AI agents working on this repository MUST read and adhere to [.antigravityrules](file:///.antigravityrules) before making any code modifications.

@@ -345,7 +345,7 @@ input[type="range"]::-moz-range-track {
 /* ============================================
    EXACT DISCLOSURE FINDER — Textarea + Controls
    ============================================ */
-#searchInput {
+textarea {
   width: 100%;
   padding: 10px 12px;
   background: var(--bg-input);
@@ -355,21 +355,27 @@ input[type="range"]::-moz-range-track {
   font-family: 'Inter', sans-serif;
   font-size: 12px;
   line-height: 1.5;
-  resize: none;
+  resize: vertical;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   margin-bottom: 12px;
+  min-height: 80px;
 }
 
-#searchInput::placeholder {
+textarea::placeholder {
   color: var(--text-muted);
   font-style: italic;
   font-size: 11px;
 }
 
-#searchInput:focus {
+textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(45, 158, 158, 0.12);
+}
+
+#searchInput {
+  resize: none;
+  min-height: unset;
 }
 
 /* --- Finder Controls Row --- */
@@ -476,36 +482,7 @@ input[type="range"]::-moz-range-track {
 /* ============================================
    SPECS VDM AUTOFILLER — Textarea + Controls + Status
    ============================================ */
-#autofillInput,
-#dropdownInput,
-#vdmEquipmentInput,
-#manualAssetInput {
-  width: 100%;
-  padding: 10px 12px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  line-height: 1.5;
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 12px;
-  min-height: 80px;
-}
-
-#autofillInput::placeholder {
-  color: var(--text-muted);
-  font-style: italic;
-  font-size: 11px;
-}
-
-#autofillInput:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(45, 158, 158, 0.12);
-}
+/* Textareas are styled globally */
 
 .autofill-controls {
   display: flex;
@@ -1146,6 +1123,66 @@ input[type="range"]::-moz-range-track {
   top: 0;
   color: var(--accent-light);
   font-size: 9px;
+}
+
+/* --- VDM Sequential Process Steps Distinct Styling --- */
+.vdm-step-section {
+  position: relative;
+  padding-left: 14px;
+  border-left: 3px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vdm-step-section:hover {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.vdm-step-section--step1 {
+  border-left-color: #a855f7; /* Premium Purple */
+}
+
+.vdm-step-section--step2 {
+  border-left-color: #06b6d4; /* Premium Cyan */
+}
+
+.vdm-step-section--step3 {
+  border-left-color: var(--gold); /* Premium Gold */
+}
+
+.step-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.step-title--step1 {
+  color: #c084fc; /* Purple light */
+}
+
+.step-title--step2 {
+  color: #22d3ee; /* Cyan light */
+}
+
+.step-title--step3 {
+  color: var(--gold-light); /* Gold light */
+}
+
+/* Subtle glow styling on focus for the respective textareas matching the step color */
+.vdm-step-section--step1 textarea:focus {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.15) !important;
+}
+
+.vdm-step-section--step2 textarea:focus {
+  border-color: rgba(6, 182, 212, 0.4) !important;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.15) !important;
+}
+
+.vdm-step-section--step3 textarea:focus {
+  border-color: rgba(201, 169, 110, 0.4) !important;
+  box-shadow: 0 0 8px rgba(201, 169, 110, 0.15) !important;
 }
 
 

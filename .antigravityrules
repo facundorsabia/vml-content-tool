@@ -37,6 +37,9 @@ vml-content-tool/
 │   ├── nbsp-visualizer/           # NBSP detector module
 │   │   ├── content-nbsp-visualizer.js
 │   │   └── popup-nbsp-visualizer.js
+│   ├── vdm-category-creator/      # VDM Category Creator module
+│   │   ├── content-vdm-category-creator.js
+│   │   └── popup-vdm-category-creator.js
 │   ├── vdm-equipment-creator/     # VDM Equipment Mass Creator module
 │   │   ├── content-vdm-equipment-creator.js
 │   │   └── popup-vdm-equipment-creator.js
@@ -91,6 +94,12 @@ vml-content-tool/
 * **Execution:** `content-vdm-equipment-creator.js` extracts the `data-path` from the DOM. Then, it uses the Sling API via `fetch()` to iteratively create multiple nodes (`sling:resourceType="vml/components/content/vdm-equipment-item"`), correcting Excel title/category orders intelligently, and safely encoding special characters to generate robust `:nameHint` endpoints.
 * **Result:** Triggers a native UI page refresh upon completion to reflect the newly created equipment list directly in the AEM authoring environment.
 
+### 7. VDM Category Creator
+* **Trigger:** User copies tabular categories and subcategories from Excel and pastes them into the Module 8 textarea.
+* **Action:** `popup-vdm-category-creator.js` parses the input (using a robust TSV parser to support line breaks and clean dropdown characters) and dispatches a `createCategories` message to the tab context.
+* **Execution:** `content-vdm-category-creator.js` queries AEM's JCR options structure. It checks if the category and subcategory nodes already exist in the JCR tree (including root and `jcr:content` nodes) using normalized exact case-insensitive matches. Missing nodes are created, and options are associated directly under their target subcategory node.
+* **Result:** Updates the tree structure and posts the Sling Import JSON to AEM, saving category/subcategory configurations without node duplicates.
+
 ---
 
 ## 🧩 Extension Integration Conventions
@@ -118,7 +127,7 @@ Every developer and AI agent working on this extension must satisfy the followin
 ## 📝 Documentation Integrity Rule
 > [!IMPORTANT]
 > **Keep Documentation strictly synchronized.**
-> Whenever you modify codebase files or implement a new feature, you MUST assess if `Readme.md` or `rules.md` needs revision. Never leave features undocumented. Keep all changes clean, commented, and explained in the primary documentation files.
+> Whenever you modify codebase files or implement a new feature, you MUST assess if `Readme.md` or `.antigravityrules` needs revision. Never leave features undocumented. Keep all changes clean, commented, and explained in the primary documentation files.
 
 ---
 
