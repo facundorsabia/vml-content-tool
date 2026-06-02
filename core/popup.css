@@ -11,7 +11,7 @@
   --bg-header: #0e0e0e;
   --bg-module: #111111;
   --bg-footer: #0c0c0c;
-  --bg-input: rgba(18, 38, 38, 0.7);
+  --bg-input: rgba(255, 255, 255, 0.04);
   --bg-btn: #163434;
   --bg-btn-hover: #1e4a4a;
 
@@ -363,7 +363,7 @@ textarea {
 }
 
 textarea::placeholder {
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.6);
   font-style: italic;
   font-size: 11px;
 }
@@ -1185,4 +1185,65 @@ textarea:focus {
   box-shadow: 0 0 8px rgba(201, 169, 110, 0.15) !important;
 }
 
-
+/* -- Custom Modal -- */
+.vml-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.vml-modal-content {
+  background: #1c1c1f;
+  border: 1px solid rgba(223, 197, 152, 0.3);
+  border-radius: var(--radius-md);
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.9), 0 0 40px rgba(223, 197, 152, 0.05);
+  display: flex;
+  flex-direction: column;
+  animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes modalPop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.vml-modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.vml-modal-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.vml-modal-close {
+  background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; transition: color 0.2s;
+}
+.vml-modal-close:hover { color: var(--text-primary); }
+.vml-modal-body {
+  padding: 16px;
+  font-size: 12px;
+  color: var(--text-primary);
+  max-height: 250px;
+  overflow-y: auto;
+}
+.vml-modal-list {
+  margin-top: 12px;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+.vml-modal-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+}
