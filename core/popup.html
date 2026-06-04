@@ -331,6 +331,102 @@
         </div>
       </div>
 
+      <!-- Module 9: VDM Specs Comparator -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--specs-comparator">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                <path d="M9 14l2 2 4-4" />
+              </svg>
+            </div>
+            <div class="module-header-info">
+              <div class="module-title-row">
+                <h3 class="module-title">VDM Specs Comparator</h3>
+                <button class="info-btn" data-module="specsComparator" type="button" aria-label="Show info">i</button>
+              </div>
+              <p class="module-desc">Compare Excel data with the active specifications table.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>Audit</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>QA</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="compareInput" placeholder="Paste Excel cells here to compare..." rows="5"></textarea>
+
+            <div class="autofill-controls" style="display: flex; gap: 8px;">
+              <button id="btnCompare" class="btn-search" style="flex: 1;">COMPARE TABLE</button>
+              <button id="btnClearCompare" class="btn-search" style="flex: 1; background: #2a1f1f; color: #ff6b6b; border-color: rgba(255, 107, 107, 0.25);">CLEAR MARKS</button>
+            </div>
+
+            <p id="compareStatus" class="autofill-status" style="display: none;"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module: VDM Options Comparator -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--specs-comparator">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <line x1="3" y1="6" x2="3.01" y2="6" />
+                <line x1="3" y1="12" x2="3.01" y2="12" />
+                <line x1="3" y1="18" x2="3.01" y2="18" />
+              </svg>
+            </div>
+            <div class="module-header-info">
+              <div class="module-title-row">
+                <h3 class="module-title">VDM Options Comparator</h3>
+                <button class="info-btn" data-module="optionsComparator" type="button" aria-label="Show info">i</button>
+              </div>
+              <p class="module-desc">Compare Excel data with the active options table.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>Audit</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>QA</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="compareOptionsInput" placeholder="Paste TITLE/NAME column and MODEL columns (with headers) here to compare..." rows="5"></textarea>
+
+            <div class="autofill-controls" style="display: flex; gap: 8px;">
+              <button id="btnCompareOptions" class="btn-search" style="flex: 1;">COMPARE OPTIONS</button>
+              <button id="btnClearCompareOptions" class="btn-search" style="flex: 1; background: #2a1f1f; color: #ff6b6b; border-color: rgba(255, 107, 107, 0.25);">CLEAR MARKS</button>
+            </div>
+
+            <p id="compareOptionsStatus" class="autofill-status" style="display: none;"></p>
+            <div id="compareOptionsDiffs" class="diffs-container" style="display: none; max-height: 150px; overflow-y: auto; margin-top: 10px; font-size: 11px; border: 1px solid var(--border); padding: 6px; border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /tab-panel qa-audit -->
 
     <!-- ===================== TAB: AUTOMATION & BOTS ===================== -->
@@ -507,6 +603,8 @@
   <script src="../modules/vdm-equipment-creator/popup-vdm-equipment-creator.js"></script>
   <script src="../modules/vdm-category-creator/popup-vdm-category-creator.js"></script>
   <script src="../modules/publish-path-generator/popup-publish-path-generator.js"></script>
+  <script src="../modules/vdm-specs-comparator/popup-vdm-specs-comparator.js"></script>
+  <script src="../modules/vdm-options-comparator/popup-vdm-options-comparator.js"></script>
 </body>
 
 </html>

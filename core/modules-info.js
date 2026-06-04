@@ -87,5 +87,26 @@ const MODULES_DOCUMENTATION = {
       "Step 2 (Category Creator): Establishes the category/subcategory structures, linking options.",
       "Step 3 (Options Autofiller): Injects specifications/selections (S/O/-) onto the options page grids, matching rows by the option title in the first column."
     ]
+  },
+  specsComparator: {
+    title: "VDM Specs Comparator",
+    description: "Compare Excel data with the active specifications table, highlighting differences on the page and reporting them in the popup.",
+    validations: [
+      "Only targets the active specs table whose cells are currently visible in the DOM.",
+      "Standardizes whitespaces, non-breaking spaces (NBSPs), and regional number formats (dots/commas) to avoid false positives.",
+      "Displays red outlines and hover expected-value badges for mismatched cells.",
+      "Displays a detailed scrollable list of differences inside the popup."
+    ]
+  },
+  optionsComparator: {
+    title: "VDM Options Comparator",
+    description: "Compare Excel data with the active VDM options table. It automatically aligns vehicle model columns and option rows dynamically regardless of their order in the spreadsheet.",
+    validations: [
+      "Requires copying the TITLE/NAME column and all MODEL columns along with their headers for accurate comparison.",
+      "Finds the active VDM Options table on the page using visible rows.",
+      "Automatically maps and matches column headers (vehicle models) using smart word-matching logic.",
+      "Matches option rows dynamically by name to eliminate any order discrepancies between AEM and Excel.",
+      "Highlights matching cells in green and mismatched cells in red with hover tooltip indicators for the expected values."
+    ]
   }
 };
