@@ -154,6 +154,7 @@ function findTableRows(root) {
  *    (Solo si el punto está seguido por exactamente 3 dígitos, ej. "3.5" no se toca)
  * 3. Solo comas (decimales invertidos): "3,5" -> "3.5", "2,3" -> "2.3", "12,34" -> "12.34"
  *    (Solo si la coma está seguida por 1 o 2 dígitos, para evitar alterar "10,500" que ya es US)
+ * 4. Cuatro números seguidos sin separadores: "5761" -> "5,761"
  *
  * @param {string} val - El texto de la celda a procesar
  * @returns {string} - El texto corregido
@@ -178,6 +179,10 @@ function correctNumberFormat(val) {
   // Caso 3: Solo comas que representan decimales. Ej: "3,5" -> "3.5", "12,34" -> "12.34"
   const onlyCommasRegex = /(\d+),(\d{1,2})(?!\d)/g;
   result = result.replace(onlyCommasRegex, '$1.$2');
+
+  // Caso 4: Cuatro números seguidos sin separadores. Ej: "5761" -> "5,761"
+  const fourDigitsRegex = /(?<!\d)(\d)(\d{3})(?!\d)/g;
+  result = result.replace(fourDigitsRegex, '$1,$2');
 
   return result;
 }
