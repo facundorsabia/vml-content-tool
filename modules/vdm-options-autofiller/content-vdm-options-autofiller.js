@@ -62,6 +62,14 @@ function normalizeTitle(title) {
     .replace(/^_|_$/g, '');
 }
 
+function matchModelName(aemModel, excelModel) {
+  if (typeof aemModel !== 'string' || typeof excelModel !== 'string') return false;
+  const normAem = aemModel.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const normExcel = excelModel.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!normAem || !normExcel) return false;
+  return normAem.endsWith(normExcel);
+}
+
 function getNameColumnIndex(row) {
   const table = row.closest('table');
   if (!table) return -1;
@@ -116,7 +124,11 @@ function findRowByTitle(rows, title) {
 function isHeaderRow(row) {
   if (!row || row.length === 0) return false;
   const firstVal = row[0]?.trim().toLowerCase();
-  const commonHeaders = ['name', 'title', 'element', 'elemento', 'option', 'options', 'caracteristica', 'característica'];
+  const commonHeaders = [
+    'name', 'title', 'element', 'elemento', 'option', 'options',
+    'caracteristica', 'característica', 'equipment', 'equipments',
+    'equipamiento', 'equipamientos'
+  ];
   return commonHeaders.includes(firstVal);
 }
 
@@ -127,7 +139,57 @@ async function fillDropdowns(matrixData) {
     return { success: false, error: 'Options table not detected in AEM.' };
   }
 
-  const startIndex = isHeaderRow(matrixData[0]) ? 1 : 0;
+  const hasHeaders = isHeaderRow(matrixData[0]);
+  const startIndex = hasHeaders ? 1 : 0;
+  const excelColToAemColMap = [];
+
+  if (hasHeaders) {
+    const firstRow = rows[0];
+    const table = firstRow.closest('table');
+    const headerRow = table ? table.querySelector('thead tr') : null;
+    const domHeaders = headerRow ? Array.from(headerRow.children) : [];
+    
+    let nameColIndex = -1;
+    for (let i = 0; i < domHeaders.length; i++) {
+      if (domHeaders[i].textContent.trim().toLowerCase() === 'name') {
+        nameColIndex = i;
+        break;
+      }
+    }
+    const modelStartColIndex = nameColIndex !== -1 ? nameColIndex + 1 : 2;
+
+    const aemModels = [];
+    for (let i = modelStartColIndex; i < domHeaders.length; i++) {
+      const headerText = domHeaders[i].textContent.trim();
+      if (headerText) {
+        aemModels.push({
+          colIndex: i,
+          name: headerText
+        });
+      }
+    }
+
+    const excelHeaders = matrixData[0];
+    excelColToAemColMap[0] = -1; // Option Name
+    for (let j = 1; j < excelHeaders.length; j++) {
+      const excelModelName = excelHeaders[j]?.trim() || '';
+      if (!excelModelName) {
+        excelColToAemColMap[j] = -1;
+        continue;
+      }
+
+      let matchedAemColIndex = -1;
+      for (const aemModel of aemModels) {
+        if (matchModelName(aemModel.name, excelModelName)) {
+          matchedAemColIndex = aemModel.colIndex;
+          break;
+        }
+      }
+      excelColToAemColMap[j] = matchedAemColIndex;
+    }
+
+    console.log('[VDM Options] Excel column mapping:', excelColToAemColMap);
+  }
 
   // 1. Validation pass: check if all options exist in the DOM and have at least one S or O
   const missingTitles = [];
@@ -158,7 +220,7 @@ async function fillDropdowns(matrixData) {
 
   if (noOptionalityTitle) {
     console.warn(`[VDM Options] Validation failed. Option "${noOptionalityTitle}" has no optionality on any trim. Aborting.`);
-    return { success: false, error: `${noOptionalityTitle} has no optionalitys on any trim` };
+    return { success: false, error: 'no_optionality', optionTitle: noOptionalityTitle };
   }
 
   if (missingTitles.length > 0) {
@@ -180,21 +242,42 @@ async function fillDropdowns(matrixData) {
     (domRow.children[1] || domRow).click();
     await new Promise(r => setTimeout(r, 250));
 
-    const selects = Array.from(domRow.querySelectorAll('select.custom-select'));
-    const excelValues = excelRow.slice(1);
+    if (hasHeaders) {
+      for (let j = 1; j < excelRow.length; j++) {
+        const aemColIndex = excelColToAemColMap[j];
+        if (aemColIndex === undefined || aemColIndex === -1) continue;
 
-    for (let j = 0; j < Math.min(selects.length, excelValues.length); j++) {
-      const targetSelect = selects[j];
-      const val = excelValues[j]?.trim() || '';
-      
-      try {
-        injectValueIntoSelect(targetSelect, val);
-      } catch (err) {
-        // Fallo silencioso en la inyección de una celda
+        const cell = domRow.children[aemColIndex];
+        const targetSelect = cell ? cell.querySelector('select.custom-select') : null;
+        if (!targetSelect) continue;
+
+        const val = excelRow[j]?.trim() || '';
+        try {
+          injectValueIntoSelect(targetSelect, val);
+        } catch (err) {
+          // Fallo silencioso en la inyección de una celda
+        }
+        
+        // Delay de espera entre celdas para estabilidad de AEM
+        await new Promise(r => setTimeout(r, 80));
       }
-      
-      // Delay de espera entre celdas para estabilidad de AEM
-      await new Promise(r => setTimeout(r, 80));
+    } else {
+      const selects = Array.from(domRow.querySelectorAll('select.custom-select'));
+      const excelValues = excelRow.slice(1);
+
+      for (let j = 0; j < Math.min(selects.length, excelValues.length); j++) {
+        const targetSelect = selects[j];
+        const val = excelValues[j]?.trim() || '';
+        
+        try {
+          injectValueIntoSelect(targetSelect, val);
+        } catch (err) {
+          // Fallo silencioso en la inyección de una celda
+        }
+        
+        // Delay de espera entre celdas para estabilidad de AEM
+        await new Promise(r => setTimeout(r, 80));
+      }
     }
     
     filledCount++;

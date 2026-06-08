@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let successTargeted = false;
       let lastErrorMsg = '';
       let missingList = [];
+      let noOptionalityList = [];
 
       frames.forEach((frame) => {
         chrome.tabs.sendMessage(
@@ -74,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.error === 'missing_options' && response.missingTitles) {
                   missingList = missingList.concat(response.missingTitles);
                   lastErrorMsg = 'Validation failed: Equipments not found.';
+                } else if (response.error === 'no_optionality' && response.optionTitle) {
+                  noOptionalityList.push(response.optionTitle);
+                  lastErrorMsg = 'Validation failed: Option has no optionality.';
                 } else {
                   lastErrorMsg = response.error;
                 }
@@ -91,6 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modal = document.getElementById('vmlModal');
                 document.getElementById('vmlModalText').innerText = "We couldn't find the following Equipments in the AEM table. Please review your list for typos or missing items:";
                 document.getElementById('vmlModalList').innerHTML = uniqueMissing.map(m => `<li>${m}</li>`).join('');
+                modal.style.display = 'flex';
+                
+                document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
+                document.getElementById('vmlModalOkBtn').onclick = () => modal.style.display = 'none';
+              } else if (noOptionalityList.length > 0) {
+                const uniqueNoOpt = [...new Set(noOptionalityList)];
+                showStatus('error', '⚠️ Process aborted due to missing optionality.');
+                
+                const modal = document.getElementById('vmlModal');
+                document.getElementById('vmlModalText').innerText = "The following Option(s) have no optionalities (S or O) configured for any trim in the Excel file. Please review:";
+                document.getElementById('vmlModalList').innerHTML = uniqueNoOpt.map(m => `<li>${m}</li>`).join('');
                 modal.style.display = 'flex';
                 
                 document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';

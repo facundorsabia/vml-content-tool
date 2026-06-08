@@ -85,8 +85,8 @@ vml-content-tool/
 ### 5. VDM Options Autofiller
 * **Trigger:** User copies a matrix range from Excel (TSV format) and pastes it into the textarea.
 * **Action:** Clicking **AUTOCOMPLETAR OPCIONES** dispatches `popup-vdm-options-autofiller.js` to parse the input and sends the array to the page context.
-* **Execution:** `content-vdm-options-autofiller.js` locates the appropriate AEM rows, forces lazy rendering of Vue selects, and perfectly simulates human events (`mousedown`, `click`, `change`, `blur`) on the correct `<select>` elements.
-* **Result:** Real-time visual feedback highlights the dropdowns being processed and completes the entire matrix configuration autonomously.
+* **Execution:** `content-vdm-options-autofiller.js` locates the appropriate AEM rows, maps Excel columns to AEM table columns via alphanumeric suffix matching if a header row is present, forces lazy rendering of Vue selects, and perfectly simulates human events (`mousedown`, `click`, `change`, `blur`) on the correct `<select>` elements.
+* **Result:** Real-time visual feedback highlights the dropdowns being processed and completes the entire matrix configuration autonomously, even if columns are ordered differently.
 
 ### 6. VDM Equipment Mass Creator
 * **Trigger:** User selects an existing VDM component in AEM and uses the form inside the extension popup.
