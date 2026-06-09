@@ -4,7 +4,8 @@
 // ============================================
 
 chrome.storage.local.get(['active'], (result) => {
-  if (result.active) {
+  const isAemEditor = window.location.href.toLowerCase().includes('aem') && window.location.href.toLowerCase().includes('editor');
+  if (result.active || isAemEditor) {
     runDetector(1); // Opacity is permanently set to 100%
   }
 });
@@ -27,10 +28,15 @@ function runDetector(alpha) {
   document.head.appendChild(style);
 
   function highlightNBSP(node) {
+    if (!node) return;
+
     // Comprobamos que sea texto y que contenga el NBSP antes de procesar
     if (node.nodeType === Node.TEXT_NODE && node.textContent.includes(charNBSP)) {
       const parent = node.parentNode;
       if (!parent) return;
+
+      // Evitar procesar si ya está dentro de un highlight-nbsp
+      if (parent.classList && parent.classList.contains('highlight-nbsp')) return;
 
       // PREVENCIÓN XSS: Usamos DocumentFragment en lugar de innerHTML
       const fragment = document.createDocumentFragment();
@@ -59,6 +65,7 @@ function runDetector(alpha) {
       // Agregamos IFRAME y CANVAS a las excepciones por seguridad y performance
       const tagsToSkip = ['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'NOSCRIPT', 'IFRAME', 'CANVAS'];
       if (!tagsToSkip.includes(node.tagName.toUpperCase())) {
+        if (node.classList && node.classList.contains('highlight-nbsp')) return;
         Array.from(node.childNodes).forEach(highlightNBSP);
       }
     }
@@ -66,6 +73,28 @@ function runDetector(alpha) {
 
   // Iniciamos la revisión del DOM
   highlightNBSP(document.body);
+
+  // Configurar MutationObserver para capturar contenido dinámico (como en AEM Editor)
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(mutation => {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach(node => {
+          highlightNBSP(node);
+        });
+      } else if (mutation.type === 'characterData') {
+        const node = mutation.target;
+        if (node.nodeType === Node.TEXT_NODE && node.textContent.includes(charNBSP)) {
+          highlightNBSP(node);
+        }
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    characterData: true,
+    subtree: true
+  });
 }
 
 // ============================================

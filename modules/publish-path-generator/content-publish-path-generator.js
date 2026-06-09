@@ -146,6 +146,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ assets: uniqueAssets });
   }
 
+  if (request.action === 'checkAssetStatus') {
+    const assetPath = request.assetPath;
+    fetch(assetPath + '.1.json')
+      .then(res => {
+        if (!res.ok) throw new Error("Status " + res.status);
+        return res.json();
+      })
+      .then(json => {
+        const jcrContent = json['jcr:content'] || {};
+        
+        const liveAction = jcrContent['cq:lastReplicationAction'] || jcrContent['cq:lastReplicationAction_publish'];
+        const liveReplicated = jcrContent['cq:lastReplicated'] || jcrContent['cq:lastReplicated_publish'];
+        const isLivePublished = liveAction === 'Activate' && !!liveReplicated;
+
+        const previewAction = jcrContent['cq:lastReplicationAction_preview'];
+        const previewReplicated = jcrContent['cq:lastReplicated_preview'];
+        const isPreviewPublished = previewAction === 'Activate' && !!previewReplicated;
+
+        sendResponse({
+          success: true,
+          live: isLivePublished ? 'Published' : 'Not Published',
+          preview: isPreviewPublished ? 'Published' : 'Not Published'
+        });
+      })
+      .catch(err => {
+        console.warn("[VML Content Tool] Failed to fetch asset replication status:", err);
+        sendResponse({
+          success: false,
+          live: 'Unknown',
+          preview: 'Unknown',
+          error: err.message
+        });
+      });
+    return true; // Keep channel open
+  }
+
   if (request.action === 'getFolderPublishPathDetails') {
     const url = window.location.href;
     const contentPrefix = "/content/";

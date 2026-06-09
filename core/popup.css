@@ -873,21 +873,95 @@ textarea:focus {
 }
 
 /* --- Detected Assets Styling --- */
+.detected-asset-container {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+  margin-bottom: 6px;
+}
+
+.detected-asset-container:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-accent);
+}
+
 .detected-asset-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-sm);
+}
+
+.detected-asset-status-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
+}
+
+.status-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.status-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
   transition: all 0.3s ease;
 }
 
-.detected-asset-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-accent);
+.status-indicator-badge.checking {
+  color: #f59e0b;
+}
+
+.status-indicator-badge.checking .status-indicator-dot {
+  background: #f59e0b;
+  animation: pulse 1s infinite alternate;
+}
+
+.status-indicator-badge.published {
+  color: var(--accent-green);
+}
+
+.status-indicator-badge.published .status-indicator-dot {
+  background: var(--accent-green);
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+}
+
+.status-indicator-badge.not-published {
+  color: #f87171;
+}
+
+.status-indicator-badge.not-published .status-indicator-dot {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+}
+
+.status-indicator-badge.unknown {
+  color: #9ca3af;
+}
+
+.status-indicator-badge.unknown .status-indicator-dot {
+  background: #6b7280;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 
 .detected-asset-left {

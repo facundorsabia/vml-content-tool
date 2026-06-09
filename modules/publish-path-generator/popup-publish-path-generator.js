@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        renderDetectedAssets(response.assets, tab.url);
+        renderDetectedAssets(response.assets, tab);
       });
     } catch (e) {
       console.error("Asset auto-detection error:", e);
@@ -292,14 +292,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function renderDetectedAssets(assets, tabUrl) {
+  function renderDetectedAssets(assets, tab) {
     updateAssetStatus('status-detected', 'Auto-Detected');
     detectedAssetsList.innerHTML = '';
     detectedAssetsContainer.style.display = 'block';
 
-    const origin = new URL(tabUrl).origin;
+    const origin = new URL(tab.url).origin;
+    const tabId = tab.id;
 
     assets.forEach(assetPath => {
+      const container = document.createElement('div');
+      container.className = 'detected-asset-container';
+
       const row = document.createElement('div');
       row.className = 'detected-asset-row';
 
@@ -348,7 +352,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
       row.appendChild(leftDiv);
       row.appendChild(copyBtn);
-      detectedAssetsList.appendChild(row);
+      container.appendChild(row);
+
+      // Status sub-row
+      const statusRow = document.createElement('div');
+      statusRow.className = 'detected-asset-status-row';
+
+      const liveBadge = document.createElement('span');
+      liveBadge.className = 'status-indicator-badge checking';
+      liveBadge.innerHTML = `<span class="status-indicator-dot"></span>Live/Prod: Checking...`;
+
+      const previewBadge = document.createElement('span');
+      previewBadge.className = 'status-indicator-badge checking';
+      previewBadge.innerHTML = `<span class="status-indicator-dot"></span>PPC/Preview: Checking...`;
+
+      statusRow.appendChild(liveBadge);
+      statusRow.appendChild(previewBadge);
+      container.appendChild(statusRow);
+
+      detectedAssetsList.appendChild(container);
+
+      // Fetch statuses asynchronously
+      chrome.tabs.sendMessage(tabId, { action: 'checkAssetStatus', assetPath: assetPath }, (statusResponse) => {
+        if (chrome.runtime.lastError || !statusResponse || !statusResponse.success) {
+          liveBadge.className = 'status-indicator-badge unknown';
+          liveBadge.innerHTML = `<span class="status-indicator-dot"></span>Live/Prod: Unknown`;
+
+          previewBadge.className = 'status-indicator-badge unknown';
+          previewBadge.innerHTML = `<span class="status-indicator-dot"></span>PPC/Preview: Unknown`;
+          return;
+        }
+
+        // Live/Prod status
+        if (statusResponse.live === 'Published') {
+          liveBadge.className = 'status-indicator-badge published';
+          liveBadge.innerHTML = `<span class="status-indicator-dot"></span>Live/Prod: Published`;
+        } else {
+          liveBadge.className = 'status-indicator-badge not-published';
+          liveBadge.innerHTML = `<span class="status-indicator-dot"></span>Live/Prod: Not Published`;
+        }
+
+        // PPC/Preview status
+        if (statusResponse.preview === 'Published') {
+          previewBadge.className = 'status-indicator-badge published';
+          previewBadge.innerHTML = `<span class="status-indicator-dot"></span>PPC/Preview: Published`;
+        } else {
+          previewBadge.className = 'status-indicator-badge not-published';
+          previewBadge.innerHTML = `<span class="status-indicator-dot"></span>PPC/Preview: Not Published`;
+        }
+      });
     });
   }
 
