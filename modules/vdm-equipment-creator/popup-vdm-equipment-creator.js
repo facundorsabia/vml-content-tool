@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Parse TSV
     const rows = rawData.split('\n');
     const parsedData = [];
+    let isFirstRow = true;
     for (let row of rows) {
       if (row.trim() !== '') {
         const columns = row.split('\t').map(col => {
@@ -27,6 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           return val;
         });
+
+        if (isFirstRow) {
+          isFirstRow = false;
+          const firstColLower = columns[0] ? columns[0].toLowerCase() : '';
+          const secondColLower = columns[1] ? columns[1].toLowerCase() : '';
+          
+          const isHeader = 
+            firstColLower.includes('category') || 
+            firstColLower.includes('option') ||
+            firstColLower.includes('name') ||
+            secondColLower.includes('title') || 
+            secondColLower.includes('equipment') ||
+            secondColLower.includes('name') ||
+            (columns.length === 1 && (firstColLower.includes('title') || firstColLower.includes('name')));
+            
+          if (isHeader) {
+            continue;
+          }
+        }
 
         if (columns.length >= 2) {
           parsedData.push([columns[0], columns[1]]);

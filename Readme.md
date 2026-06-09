@@ -30,7 +30,7 @@ vml-content-tool/
 │   ├── aem-switcher/              # Módulo: AEM Quick Switcher
 │   ├── disclouse-finder/          # Módulo: Exact Disclosure Finder
 │   ├── htags-visualizer/          # Módulo: HTag Visualizer
-│   ├── nbsp-visualizer/           # Módulo: NBSP Detector
+│   ├── nbsp-visualizer/           # Módulo: NBSP Corrector
 │   ├── publish-path-generator/    # Módulo: Publish Path Generator
 │   ├── vdm-category-creator/      # Módulo: VDM Category Creator
 │   ├── vdm-equipment-creator/     # Módulo: VDM Equipment Mass Creator
@@ -47,10 +47,11 @@ vml-content-tool/
 * **VAP ➔ EDITOR**: Abre el modo Editor de AEM en una nueva pestaña partiendo de una URL en modo View as Publish (VAP).
 * **CF Editor ➔ Admin**: Salta directamente desde el editor de un fragmento de contenido a la carpeta de Assets (DAM) donde está guardado, sin tener que navegar por todo el árbol.
 
-### 2. NBSP Detector
+### 2. NBSP Corrector
 * Haz clic en el icono de la extensión para abrir el panel de control.
 * Activa el switch para resaltar los espacios `&nbsp;` en la página actual.
 * Los espacios detectados aparecerán con un resaltado **rojo**.
+* **Limpieza en AEM Editor**: Estando en páginas de edición de AEM, aparecerá automáticamente un botón flotante **🧹 Correct NBSPs** que eliminará los NBSPs de todos los inputs, textareas y editores enriquecidos, aplicando un recorte inteligente al inicio/final de las frases (removiendo el espacio redundante) y disparando los eventos necesarios para que AEM guarde el texto limpio.
 * **Limpieza global**: Al pegar datos en cualquier textarea de la extensión, los NBSP se limpian y convierten automáticamente a espacios normales para evitar fallas.
 
 ### 3. HTag Visualizer

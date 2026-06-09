@@ -1,6 +1,6 @@
 // ============================================
-// VML Content Tool v2.0 — Popup: NBSP Detector
-// Módulo de UI para el toggle y slider de NBSP
+// VML Content Tool v2.0 — Popup: NBSP Corrector
+// Módulo de UI para el toggle de NBSP
 // ============================================
 
 // === DOM References ===

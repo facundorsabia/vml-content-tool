@@ -1,11 +1,19 @@
 // ============================================
-// VML Content Tool v2.0 — Content: NBSP Detector
-// Detecta y resalta visualmente &nbsp; en la página
+// VML Content Tool v2.0 — Content: NBSP Corrector
+// Detecta, resalta y corrige &nbsp; en la página
 // ============================================
 
+function checkIsAemEditor() {
+  try {
+    const href = window.top.location.href;
+    return href.toLowerCase().includes('aem') && href.toLowerCase().includes('editor');
+  } catch (e) {
+    return window.location.href.toLowerCase().includes('aem') && window.location.href.toLowerCase().includes('editor');
+  }
+}
+
 chrome.storage.local.get(['active'], (result) => {
-  const isAemEditor = window.location.href.toLowerCase().includes('aem') && window.location.href.toLowerCase().includes('editor');
-  if (result.active || isAemEditor) {
+  if (result.active || checkIsAemEditor()) {
     runDetector(1); // Opacity is permanently set to 100%
   }
 });
@@ -102,8 +110,7 @@ function runDetector(alpha) {
 // ============================================
 
 if (window === window.top) {
-  const isAemEditor = window.location.href.toLowerCase().includes('aem') && window.location.href.toLowerCase().includes('editor');
-  if (isAemEditor) {
+  if (checkIsAemEditor()) {
     initAemEditorNbspCorrector();
   }
 }

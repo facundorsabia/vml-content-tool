@@ -31,11 +31,12 @@ const MODULES_DOCUMENTATION = {
     ]
   },
   nbspDetector: {
-    title: "NBSP Detector",
-    description: "Detect and highlight non-breaking spaces (NBSPs) in the current page's content.",
+    title: "NBSP Corrector",
+    description: "Detect, highlight, and correct non-breaking spaces (NBSPs) in the page's content.",
     validations: [
       "Visually highlights all `&nbsp;` characters on the page with red alert borders.",
-      "Helps identify unwanted hidden spaces before publishing content."
+      "Helps identify unwanted hidden spaces before publishing content.",
+      "On AEM Editor pages, a floating 'Correct NBSPs' button automatically appears to remove all NBSPs from editable fields and inputs, trimming leading/trailing spaces dynamically."
     ]
   },
   htagVisualizer: {
