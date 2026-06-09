@@ -25,10 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
       // Skip header if present
       const isHeader = i === 0 && (
         columns[0].toLowerCase().includes('category') || 
-        (columns[1] && columns[1].toLowerCase().includes('sub-category')) ||
-        (columns[1] && columns[1].toLowerCase().includes('subcategory')) ||
-        (columns[2] && columns[2].toLowerCase().includes('option')) ||
-        (columns[2] && columns[2].toLowerCase().includes('equipment'))
+        columns[0].toLowerCase().includes('option') ||
+        columns[0].toLowerCase().includes('group') ||
+        columns[0].toLowerCase().includes('name') ||
+        (columns[1] && (
+          columns[1].toLowerCase().includes('sub-category') ||
+          columns[1].toLowerCase().includes('subcategory') ||
+          columns[1].toLowerCase().includes('name') ||
+          columns[1].toLowerCase().includes('title')
+        )) ||
+        (columns[2] && (
+          columns[2].toLowerCase().includes('option') ||
+          columns[2].toLowerCase().includes('equipment') ||
+          columns[2].toLowerCase().includes('name') ||
+          columns[2].toLowerCase().includes('title')
+        ))
       );
 
       if (isHeader) {
