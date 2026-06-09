@@ -67,3 +67,371 @@ function runDetector(alpha) {
   // Iniciamos la revisión del DOM
   highlightNBSP(document.body);
 }
+
+// ============================================
+// AEM Editor NBSP Corrector
+// ============================================
+
+if (window === window.top) {
+  const isAemEditor = window.location.href.toLowerCase().includes('aem') && window.location.href.toLowerCase().includes('editor');
+  if (isAemEditor) {
+    initAemEditorNbspCorrector();
+  }
+}
+
+function initAemEditorNbspCorrector() {
+  // 1. Inyectar estilos premium para el botón flotante
+  const style = document.createElement('style');
+  style.textContent = `
+    #vml-nbsp-corrector-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999999;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .vml-btn-correct {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(30, 41, 59, 0.85); /* Slate 800 con opacidad */
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
+    }
+    .vml-btn-correct:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    }
+    .vml-btn-correct:active {
+      transform: translateY(0);
+    }
+    .vml-badge {
+      background: #ef4444; /* Rojo alerta */
+      color: white;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: bold;
+      min-width: 16px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .vml-btn-correct.success {
+      background: rgba(16, 185, 129, 0.9); /* Esmeralda */
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+  `;
+  document.head.appendChild(style);
+
+  // 2. Crear e inyectar el contenedor y botón en el DOM
+  const container = document.createElement('div');
+  container.id = 'vml-nbsp-corrector-container';
+  container.style.display = 'none'; // ocultar por defecto
+  
+  const button = document.createElement('button');
+  button.id = 'vml-correct-nbsp-btn';
+  button.className = 'vml-btn-correct';
+  
+  const icon = document.createElement('span');
+  icon.className = 'vml-icon';
+  icon.textContent = '🧹';
+  
+  const text = document.createElement('span');
+  text.className = 'vml-btn-text';
+  text.textContent = 'Correct NBSPs';
+  
+  const badge = document.createElement('span');
+  badge.id = 'vml-nbsp-badge';
+  badge.className = 'vml-badge';
+  badge.style.display = 'none';
+  badge.textContent = '0';
+
+  button.appendChild(icon);
+  button.appendChild(text);
+  button.appendChild(badge);
+  container.appendChild(button);
+  document.body.appendChild(container);
+
+  // 3. Listener para el evento click
+  button.addEventListener('click', onCorrectNbspClick);
+
+  // 4. Polling de escaneo dinámico cada 2 segundos
+  setInterval(updateFloatingButtonState, 2000);
+}
+
+function getEditableElements(root = document) {
+  let elements = [];
+
+  // 1. Inputs estándar y textareas
+  try {
+    const inputs = root.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      const type = input.getAttribute('type')?.toLowerCase();
+      const skipTypes = ['hidden', 'submit', 'button', 'image', 'checkbox', 'radio', 'file', 'range', 'reset'];
+      if (!type || !skipTypes.includes(type)) {
+        elements.push({
+          type: 'input',
+          element: input
+        });
+      }
+    });
+  } catch (e) {
+    console.debug('[VML NBSP] Error al escanear inputs:', e);
+  }
+
+  // 2. Elementos contenteditable="true" (Quill, RTE)
+  try {
+    const editables = root.querySelectorAll('[contenteditable="true"]');
+    editables.forEach(el => {
+      elements.push({
+        type: 'contenteditable',
+        element: el
+      });
+    });
+  } catch (e) {
+    console.debug('[VML NBSP] Error al escanear contenteditables:', e);
+  }
+
+  // 3. Iframe recursivo (same-origin)
+  try {
+    const iframes = root.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (iframeDoc) {
+          elements = elements.concat(getEditableElements(iframeDoc));
+        }
+      } catch (e) {
+        // Silenciar iframes cross-origin
+      }
+    });
+  } catch (e) {
+    console.debug('[VML NBSP] Error al escanear iframes:', e);
+  }
+
+  return elements;
+}
+
+function countNbspInElement(elInfo) {
+  const charNBSP = "\u00A0";
+  try {
+    if (elInfo.type === 'input') {
+      const value = elInfo.element.value || '';
+      return (value.match(new RegExp(charNBSP, 'g')) || []).length;
+    } else {
+      const text = elInfo.element.textContent || '';
+      return (text.match(new RegExp(charNBSP, 'g')) || []).length;
+    }
+  } catch (e) {
+    return 0;
+  }
+}
+
+function updateFloatingButtonState() {
+  const elements = getEditableElements();
+  let totalNbsp = 0;
+  elements.forEach(elInfo => {
+    totalNbsp += countNbspInElement(elInfo);
+  });
+
+  const container = document.getElementById('vml-nbsp-corrector-container');
+  const badge = document.getElementById('vml-nbsp-badge');
+  const btnText = document.querySelector('#vml-correct-nbsp-btn .vml-btn-text');
+  
+  if (container) {
+    if (totalNbsp > 0) {
+      if (btnText && !btnText.dataset.corrected) {
+        container.style.display = 'block';
+        if (badge) {
+          badge.textContent = totalNbsp;
+          badge.style.display = 'inline-block';
+        }
+        btnText.textContent = `Correct ${totalNbsp} NBSP${totalNbsp > 1 ? 's' : ''}`;
+      }
+    } else {
+      if (btnText && !btnText.dataset.corrected) {
+        container.style.display = 'none';
+      }
+    }
+  }
+}
+
+function isStartOfBlockOrText(node, container) {
+  let current = node;
+  while (current && current !== container) {
+    let sib = current.previousSibling;
+    while (sib) {
+      if (sib.textContent && sib.textContent.trim().length > 0) {
+        return false;
+      }
+      sib = sib.previousSibling;
+    }
+    current = current.parentNode;
+  }
+  return true;
+}
+
+function isEndOfBlockOrText(node, container) {
+  let current = node;
+  while (current && current !== container) {
+    let sib = current.nextSibling;
+    while (sib) {
+      if (sib.textContent && sib.textContent.trim().length > 0) {
+        return false;
+      }
+      sib = sib.nextSibling;
+    }
+    current = current.parentNode;
+  }
+  return true;
+}
+
+function correctNbspInElement(elInfo) {
+  const charNBSP = "\u00A0";
+  let correctedCount = 0;
+
+  try {
+    if (elInfo.type === 'input') {
+      const originalValue = elInfo.element.value || '';
+      if (originalValue.includes(charNBSP)) {
+        correctedCount = (originalValue.match(new RegExp(charNBSP, 'g')) || []).length;
+        
+        // Eliminar NBSPs al principio y al final, y reemplazar los del medio con espacio
+        let newValue = originalValue.replace(/^\u00A0+/g, '');
+        newValue = newValue.replace(/\u00A0+$/g, '');
+        newValue = newValue.replace(/\u00A0/g, ' ');
+        elInfo.element.value = newValue;
+        
+        // Simular eventos humanos para marcar el campo como dirty y que AEM lo detecte
+        elInfo.element.focus();
+        elInfo.element.dispatchEvent(new Event('input', { bubbles: true }));
+        elInfo.element.dispatchEvent(new Event('change', { bubbles: true }));
+        elInfo.element.blur();
+      }
+    } else {
+      const element = elInfo.element;
+      let changed = false;
+
+      // 1. Eliminar spans de resaltado e intercalar nodos de texto limpio.
+      // Si el span de resaltado está al inicio/final del bloque/texto, lo removemos sin espacio.
+      // Si está en el medio, lo reemplazamos con un espacio normal.
+      const highlightSpans = element.querySelectorAll('span.highlight-nbsp');
+      if (highlightSpans.length > 0) {
+        highlightSpans.forEach(span => {
+          correctedCount++;
+          const atStart = isStartOfBlockOrText(span, element);
+          const atEnd = isEndOfBlockOrText(span, element);
+          
+          if (atStart || atEnd) {
+            span.remove();
+          } else {
+            const spaceNode = document.createTextNode(' ');
+            span.replaceWith(spaceNode);
+          }
+          changed = true;
+        });
+      }
+
+      // 2. Buscar y corregir otros NBSP en nodos de texto puros
+      const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      const textNodesToModify = [];
+      while (node = walk.nextNode()) {
+        if (node.nodeValue && node.nodeValue.includes(charNBSP)) {
+          textNodesToModify.push(node);
+        }
+      }
+
+      textNodesToModify.forEach(node => {
+        const count = (node.nodeValue.match(new RegExp(charNBSP, 'g')) || []).length;
+        correctedCount += count;
+        
+        let val = node.nodeValue;
+        if (val.startsWith(charNBSP) && isStartOfBlockOrText(node, element)) {
+          val = val.replace(/^\u00A0+/g, '');
+        }
+        if (val.endsWith(charNBSP) && isEndOfBlockOrText(node, element)) {
+          val = val.replace(/\u00A0+$/g, '');
+        }
+        val = val.replace(/\u00A0/g, ' ');
+        node.nodeValue = val;
+        
+        changed = true;
+      });
+
+      if (changed) {
+        // Unir nodos de texto adyacentes
+        element.normalize();
+
+        // Disparar eventos para marcar el editor como modificado en AEM/Quill/Vue
+        element.focus();
+        element.dispatchEvent(new FocusEvent('focus', { bubbles: true }));
+        element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        
+        element.dispatchEvent(new InputEvent('input', {
+          bubbles: true,
+          cancelable: true,
+          inputType: 'insertText',
+          data: element.textContent
+        }));
+        element.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // Evento Quill personalizado de cambio de texto
+        element.dispatchEvent(new CustomEvent('text-change', {
+          bubbles: true,
+          detail: { value: element.innerHTML }
+        }));
+
+        element.blur();
+        element.dispatchEvent(new FocusEvent('blur', { bubbles: true }));
+        element.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+      }
+    }
+  } catch (e) {
+    console.error('[VML NBSP] Error al corregir elemento:', e);
+  }
+
+  return correctedCount;
+}
+
+function onCorrectNbspClick() {
+  const elements = getEditableElements();
+  let totalCorrected = 0;
+  
+  elements.forEach(elInfo => {
+    totalCorrected += correctNbspInElement(elInfo);
+  });
+
+  const btn = document.getElementById('vml-correct-nbsp-btn');
+  const btnText = document.querySelector('#vml-correct-nbsp-btn .vml-btn-text');
+  const badge = document.getElementById('vml-nbsp-badge');
+  
+  if (btn && btnText) {
+    btn.classList.add('success');
+    btnText.textContent = totalCorrected > 0 
+      ? `Corrected ${totalCorrected} NBSP${totalCorrected > 1 ? 's' : ''}!`
+      : 'No NBSPs found!';
+    btnText.dataset.corrected = "true";
+    if (badge) {
+      badge.style.display = 'none';
+    }
+
+    setTimeout(() => {
+      btn.classList.remove('success');
+      delete btnText.dataset.corrected;
+      updateFloatingButtonState();
+    }, 3000);
+  }
+}
