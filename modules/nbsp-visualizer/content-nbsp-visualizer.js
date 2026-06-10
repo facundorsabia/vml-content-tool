@@ -13,7 +13,7 @@ function checkIsAemEditor() {
 }
 
 chrome.storage.local.get(['active'], (result) => {
-  if (result.active || checkIsAemEditor()) {
+  if (result.active) {
     runDetector(1); // Opacity is permanently set to 100%
   }
 });
@@ -110,9 +110,11 @@ function runDetector(alpha) {
 // ============================================
 
 if (window === window.top) {
-  if (checkIsAemEditor()) {
-    initAemEditorNbspCorrector();
-  }
+  chrome.storage.local.get(['active'], (result) => {
+    if (result.active && checkIsAemEditor()) {
+      initAemEditorNbspCorrector();
+    }
+  });
 }
 
 function initAemEditorNbspCorrector() {
