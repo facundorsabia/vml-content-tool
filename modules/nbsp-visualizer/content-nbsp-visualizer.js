@@ -429,7 +429,7 @@ function correctNbspInElement(elInfo) {
         // Evento Quill personalizado de cambio de texto
         element.dispatchEvent(new CustomEvent('text-change', {
           bubbles: true,
-          detail: { value: element.innerHTML }
+          detail: { value: element.textContent }
         }));
 
         element.blur();

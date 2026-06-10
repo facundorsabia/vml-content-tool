@@ -47,20 +47,14 @@ function injectValueIntoQuillEditor(editor, value) {
     bubbles: true
   }));
 
-  // 4. Inyectar el nuevo contenido como <p>
-  // Si el valor está vacío, inyectamos la estructura vacía por defecto de Quill
+  // 4. Inyectar el nuevo contenido de forma segura mediante DOM
+  const p = document.createElement('p');
   if (value === '') {
-    editor.innerHTML = '<p><br></p>';
+    p.appendChild(document.createElement('br'));
   } else {
-    // Sanitizar el valor para prevenir XSS: escapar entidades HTML
-    const sanitized = value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-
-    editor.innerHTML = '<p>' + sanitized + '</p>';
+    p.textContent = value;
   }
+  editor.replaceChildren(p);
 
   // 5. Despachar evento InputEvent (el que Quill/Vue escucha)
   editor.dispatchEvent(new InputEvent('input', {

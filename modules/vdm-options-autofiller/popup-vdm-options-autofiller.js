@@ -94,7 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const modal = document.getElementById('vmlModal');
                 document.getElementById('vmlModalText').innerText = "We couldn't find the following Equipments in the AEM table. Please review your list for typos or missing items:";
-                document.getElementById('vmlModalList').innerHTML = uniqueMissing.map(m => `<li>${m}</li>`).join('');
+                const listEl = document.getElementById('vmlModalList');
+                listEl.textContent = '';
+                uniqueMissing.forEach(m => {
+                  const li = document.createElement('li');
+                  li.textContent = m;
+                  listEl.appendChild(li);
+                });
                 modal.style.display = 'flex';
                 
                 document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
@@ -105,7 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const modal = document.getElementById('vmlModal');
                 document.getElementById('vmlModalText').innerText = "The following Option(s) have no optionalities (S or O) configured for any trim in the Excel file. Please review:";
-                document.getElementById('vmlModalList').innerHTML = uniqueNoOpt.map(m => `<li>${m}</li>`).join('');
+                const listEl = document.getElementById('vmlModalList');
+                listEl.textContent = '';
+                uniqueNoOpt.forEach(m => {
+                  const li = document.createElement('li');
+                  li.textContent = m;
+                  listEl.appendChild(li);
+                });
                 modal.style.display = 'flex';
                 
                 document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';

@@ -9,6 +9,12 @@
       "scripting",
       "webNavigation"
     ],
+  "host_permissions": [
+    "https://*.adobeaemcloud.com/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; frame-ancestors 'none';"
+  },
   "action": {
     "default_popup": "core/popup.html",
     "default_icon": "assets/logo-vml.png"
@@ -19,7 +25,7 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "https://*.adobeaemcloud.com/*"
       ],
       "js": [
         "modules/nbsp-visualizer/content-nbsp-visualizer.js",

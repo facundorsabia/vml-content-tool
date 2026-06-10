@@ -38,6 +38,11 @@ function getTargetPaths() {
     jcrPath = jcrPath.slice(0, -1);
   }
 
+  // Security Validation: Ensure path starts with valid roots and has alphanumeric characters
+  if (!/^(\/(content|conf|etc)\/[a-zA-Z0-9\-_/]+)$/.test(jcrPath)) {
+    throw new Error("Ruta de JCR inválida o peligrosa detectada.");
+  }
+
   // If path ends with "/options", base path is its parent, options path is the full JCR path
   let optionsUrl = jcrPath;
   let modelUrl = jcrPath;

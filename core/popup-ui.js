@@ -69,16 +69,31 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltipEl = document.createElement('div');
     tooltipEl.id = 'infoTooltip';
     tooltipEl.className = 'info-tooltip';
-    tooltipEl.innerHTML = `
-      <div class="tooltip-header">
-        <h4 id="tooltipTitle" class="tooltip-title"></h4>
-      </div>
-      <p id="tooltipDesc" class="tooltip-desc"></p>
-      <div class="tooltip-validations-section">
-        <span class="tooltip-section-label">Validation Rules:</span>
-        <ul id="tooltipValidations" class="tooltip-validations-list"></ul>
-      </div>
-    `;
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'tooltip-header';
+    const titleH4 = document.createElement('h4');
+    titleH4.id = 'tooltipTitle';
+    titleH4.className = 'tooltip-title';
+    headerDiv.appendChild(titleH4);
+
+    const descP = document.createElement('p');
+    descP.id = 'tooltipDesc';
+    descP.className = 'tooltip-desc';
+
+    const validationsDiv = document.createElement('div');
+    validationsDiv.className = 'tooltip-validations-section';
+    const sectionLabelSpan = document.createElement('span');
+    sectionLabelSpan.className = 'tooltip-section-label';
+    sectionLabelSpan.textContent = 'Validation Rules:';
+    const validationsUl = document.createElement('ul');
+    validationsUl.id = 'tooltipValidations';
+    validationsUl.className = 'tooltip-validations-list';
+    validationsDiv.appendChild(sectionLabelSpan);
+    validationsDiv.appendChild(validationsUl);
+
+    tooltipEl.appendChild(headerDiv);
+    tooltipEl.appendChild(descP);
+    tooltipEl.appendChild(validationsDiv);
     document.body.appendChild(tooltipEl);
   }
 
@@ -102,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tooltipTitle.textContent = info.title;
     tooltipDesc.textContent = info.description;
     
-    tooltipValidations.innerHTML = '';
+    tooltipValidations.textContent = '';
     if (Array.isArray(info.validations)) {
       info.validations.forEach(val => {
         const li = document.createElement('li');

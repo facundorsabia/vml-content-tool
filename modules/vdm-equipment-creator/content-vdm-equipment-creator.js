@@ -128,21 +128,32 @@ function getTargetUrl() {
   // AEM as a Cloud Service uses hash routing like:
   // /ui#/aem/vdm.html/browse/content/...
   // We need to extract the actual JCR path which starts with /content/, /conf/, etc.
+  let jcrPath = '';
   const roots = ['/content/', '/conf/', '/etc/'];
   for (const root of roots) {
     const idx = fullStr.indexOf(root);
     if (idx !== -1) {
-      return fullStr.substring(idx);
+      jcrPath = fullStr.substring(idx);
+      break;
     }
   }
 
-  // Fallback for older AEM versions (e.g., /assets.html/content/dam/...)
-  const htmlIndex = fullStr.indexOf('.html');
-  if (htmlIndex !== -1) {
-    return fullStr.substring(htmlIndex + 5);
+  if (!jcrPath) {
+    // Fallback for older AEM versions (e.g., /assets.html/content/dam/...)
+    const htmlIndex = fullStr.indexOf('.html');
+    if (htmlIndex !== -1) {
+      jcrPath = fullStr.substring(htmlIndex + 5);
+    } else {
+      jcrPath = fullStr.replace(/^#/, '');
+    }
   }
-  
-  return fullStr.replace(/^#/, '');
+
+  // Security Validation: Ensure path starts with valid roots and has alphanumeric characters
+  if (!/^(\/(content|conf|etc)\/[a-zA-Z0-9\-_/]+)$/.test(jcrPath)) {
+    throw new Error("Ruta de JCR inválida o peligrosa detectada.");
+  }
+
+  return jcrPath;
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
