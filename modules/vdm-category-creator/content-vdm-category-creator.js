@@ -140,23 +140,30 @@ function findCategoryNode(jcrTree, catName, catKey) {
 
 function findEquipmentPath(equipmentsJson, optionName, modelUrl) {
   const normalized = normalizeTitle(optionName);
+  const targetTitle = optionName.toLowerCase().trim();
 
+  // 1. Exact Title Match (Highest Priority)
   for (const key in equipmentsJson) {
     if (key.startsWith('jcr:') || key.startsWith('sling:')) continue;
-
     const node = equipmentsJson[key];
-    const nodeName = key.toLowerCase();
     const nodeTitle = (node.name || node.headline || '').toLowerCase().trim();
-    const targetTitle = optionName.toLowerCase().trim();
-
-    // Match truncated keys or exact titles
-    const isNameMatch = normalized.startsWith(nodeName) || nodeName.startsWith(normalized);
-    const isTitleMatch = nodeTitle === targetTitle;
-
-    if (isNameMatch || isTitleMatch) {
+    
+    if (nodeTitle === targetTitle) {
       return `${modelUrl}/collections/equipment/${key}`;
     }
   }
+
+  // 2. Fallback to Name/Key match (If title changed but JCR key matches)
+  for (const key in equipmentsJson) {
+    if (key.startsWith('jcr:') || key.startsWith('sling:')) continue;
+    const nodeName = key.toLowerCase();
+    
+    const isNameMatch = normalized.startsWith(nodeName) || nodeName.startsWith(normalized);
+    if (isNameMatch) {
+      return `${modelUrl}/collections/equipment/${key}`;
+    }
+  }
+  
   return null;
 }
 
