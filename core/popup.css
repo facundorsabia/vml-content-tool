@@ -1321,3 +1321,29 @@ textarea:focus {
   padding: 14px 16px;
   border-top: 1px solid var(--border);
 }
+
+/* -- Text Input styling matching textareas -- */
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 12px;
+}
+input[type="text"]::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  font-size: 11px;
+}
+input[type="text"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(45, 158, 158, 0.12);
+}
+

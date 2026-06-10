@@ -122,6 +122,12 @@ Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para
   - Para Carpetas de AEM: Extrae el título real (`dc:title` o `jcr:title`) de cada elemento hijo del repositorio JCR vía Sling API (con fallback de raspado del DOM si la llamada API fallara).
 * **Formato Listo para Tickets**: Copia al portapapeles una cadena formateada con la URL de la carpeta padre seguida de `>>> [Título/Nombre]`, lista para ser pegada en tus tickets de Jira o herramientas internas.
 
+### 8. Model Walk Content Fragment Creator
+* Permite crear masivamente Content Fragments del tipo "Model Walk" dentro de cualquier carpeta DAM en AEM.
+* **Prefijo Inteligente**: Permite especificar un prefijo opcional (por ejemplo, el nombre del vehículo/modelo) que se agregará de forma automática al inicio del título de cada fragmento.
+* **Slugificación Automática (Nombres de Nodo)**: Genera de forma segura los nombres de los nodos del JCR (slug) a partir de los títulos, convirtiendo el texto a minúsculas, removiendo acentos y reemplazando cualquier caracter especial por guiones simples.
+* **Personalización del Modelo**: Incluye un campo editable pre-cargado con la ruta por defecto del modelo de fragmento de contenido (`/conf/aem-ford-foundation/settings/dam/cfm/models/model-walk`), lo cual permite adaptarlo rápidamente para otros tipos de fragmento si fuera necesario.
+
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
 

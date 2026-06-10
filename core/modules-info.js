@@ -88,5 +88,15 @@ const MODULES_DOCUMENTATION = {
       "Step 2 (Category Creator): Establishes the category/subcategory structures, linking options.",
       "Step 3 (Options Autofiller): Injects specifications/selections (S/O/-) onto the options page grids, matching rows by the option title in the first column."
     ]
+  },
+  modelWalkCfCreator: {
+    title: "Model Walk CF Creator",
+    description: "Bulk create Model Walk Content Fragments in AEM folders.",
+    validations: [
+      "Requires being inside an AEM DAM Assets folder or console (e.g., specifications folder).",
+      "Prefix and suffixes are concatenated to form the fragment Title.",
+      "Fragment Names are automatically slugified to follow alphanumeric-hyphen JCR naming rules.",
+      "The default model path is pre-filled, but can be adjusted for other models."
+    ]
   }
 };
