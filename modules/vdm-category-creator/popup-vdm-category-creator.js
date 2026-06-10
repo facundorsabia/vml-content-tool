@@ -176,7 +176,7 @@ function parseTSV(text) {
         currentCell += char;
       }
     } else {
-      if (char === '"') {
+      if (char === '"' && currentCell.trim() === '') {
         inQuotes = true;
       } else if (char === '\t') {
         currentLine.push(currentCell);
