@@ -59,80 +59,66 @@ document.addEventListener('DOMContentLoaded', () => {
       let missingList = [];
       let noOptionalityList = [];
 
-      frames.forEach((frame) => {
-        chrome.tabs.sendMessage(
-          tab.id, 
-          { action: 'autoFillDropdowns', data: matrixData }, 
-          { frameId: frame.frameId }, 
-          (response) => {
-            // Silent connection error handling
-            if (chrome.runtime.lastError) {
-              // The frame doesn't have the listener, this is normal in AEM
-            } else if (response) {
-              if (response.success) {
-                successTargeted = true;
-              } else if (response.error) {
-                if (response.error === 'missing_options' && response.missingTitles) {
-                  missingList = missingList.concat(response.missingTitles);
-                  lastErrorMsg = 'Validation failed: Equipments not found.';
-                } else if (response.error === 'no_optionality' && response.optionTitle) {
-                  noOptionalityList.push(response.optionTitle);
-                  lastErrorMsg = 'Validation failed: Option has no optionality.';
-                } else {
-                  lastErrorMsg = response.error;
-                }
-              }
-            }
+      // Enviar SOLO al frame principal (frameId 0) para evitar ejecuciones duplicadas
+      // en iframes internos de AEM que causaban llenado en categorías incorrectas.
+      chrome.tabs.sendMessage(
+        tab.id, 
+        { action: 'autoFillDropdowns', data: matrixData }, 
+        { frameId: 0 }, 
+        (response) => {
+          btn.disabled = false;
+          btn.textContent = 'APPLY TO DROPDOWNS';
 
-            responsesCount++;
-            if (responsesCount === frames.length) {
-              btn.disabled = false;
-              btn.textContent = 'APPLY TO DROPDOWNS';
-              if (missingList.length > 0) {
-                const uniqueMissing = [...new Set(missingList)];
-                showStatus('error', '⚠️ Process aborted due to missing equipments.');
-                
-                const modal = document.getElementById('vmlModal');
-                document.getElementById('vmlModalText').innerText = "We couldn't find the following Equipments in the AEM table. Please review your list for typos or missing items:";
-                const listEl = document.getElementById('vmlModalList');
-                listEl.textContent = '';
-                uniqueMissing.forEach(m => {
-                  const li = document.createElement('li');
-                  li.textContent = m;
-                  listEl.appendChild(li);
-                });
-                modal.style.display = 'flex';
-                
-                document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
-                document.getElementById('vmlModalOkBtn').onclick = () => modal.style.display = 'none';
-              } else if (noOptionalityList.length > 0) {
-                const uniqueNoOpt = [...new Set(noOptionalityList)];
-                showStatus('error', '⚠️ Process aborted due to missing optionality.');
-                
-                const modal = document.getElementById('vmlModal');
-                document.getElementById('vmlModalText').innerText = "The following Option(s) have no optionalities (S or O) configured for any trim in the Excel file. Please review:";
-                const listEl = document.getElementById('vmlModalList');
-                listEl.textContent = '';
-                uniqueNoOpt.forEach(m => {
-                  const li = document.createElement('li');
-                  li.textContent = m;
-                  listEl.appendChild(li);
-                });
-                modal.style.display = 'flex';
-                
-                document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
-                document.getElementById('vmlModalOkBtn').onclick = () => modal.style.display = 'none';
-              } else if (successTargeted) {
-                showStatus('success', '✔ Cells autofilled!');
-              } else if (lastErrorMsg) {
-                showStatus('error', lastErrorMsg);
-              } else {
-                showStatus('error', 'Options table not detected in AEM.');
-              }
-            }
+          if (chrome.runtime.lastError) {
+            showStatus('error', 'Error: Ensure you are on the AEM page and have RELOADED the tab.');
+            return;
           }
-        );
-      });
+
+          if (!response) {
+            showStatus('error', 'Options table not detected in AEM.');
+            return;
+          }
+
+          if (response.success) {
+            showStatus('success', '✔ Cells autofilled!');
+          } else if (response.error === 'missing_options' && response.missingTitles) {
+            const uniqueMissing = [...new Set(response.missingTitles)];
+            showStatus('error', '⚠️ Process aborted due to missing equipments.');
+            
+            const modal = document.getElementById('vmlModal');
+            document.getElementById('vmlModalText').innerText = "We couldn't find the following Equipments in the AEM table. Please review your list for typos or missing items:";
+            const listEl = document.getElementById('vmlModalList');
+            listEl.textContent = '';
+            uniqueMissing.forEach(m => {
+              const li = document.createElement('li');
+              li.textContent = m;
+              listEl.appendChild(li);
+            });
+            modal.style.display = 'flex';
+            
+            document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
+            document.getElementById('vmlModalOkBtn').onclick = () => modal.style.display = 'none';
+          } else if (response.error === 'no_optionality' && response.optionTitle) {
+            showStatus('error', '⚠️ Process aborted due to missing optionality.');
+            
+            const modal = document.getElementById('vmlModal');
+            document.getElementById('vmlModalText').innerText = "The following Option(s) have no optionalities (S or O) configured for any trim in the Excel file. Please review:";
+            const listEl = document.getElementById('vmlModalList');
+            listEl.textContent = '';
+            const li = document.createElement('li');
+            li.textContent = response.optionTitle;
+            listEl.appendChild(li);
+            modal.style.display = 'flex';
+            
+            document.getElementById('vmlModalClose').onclick = () => modal.style.display = 'none';
+            document.getElementById('vmlModalOkBtn').onclick = () => modal.style.display = 'none';
+          } else if (response.error) {
+            showStatus('error', response.error);
+          } else {
+            showStatus('error', 'Options table not detected in AEM.');
+          }
+        }
+      );
     } catch (err) {
       btn.disabled = false;
       btn.textContent = 'APPLY TO DROPDOWNS';
