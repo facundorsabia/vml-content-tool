@@ -105,6 +105,68 @@ function normalizeTitle(title) {
     .replace(/^_|_$/g, '');
 }
 
+function levenshtein(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          Math.min(matrix[i][j - 1] + 1, // insertion
+          matrix[i - 1][j] + 1) // deletion
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+function fuzzyMatchCategory(inputCategory) {
+  if (!inputCategory) return undefined;
+  
+  const directMatch = CATEGORY_MAP[inputCategory];
+  if (directMatch !== undefined) return directMatch;
+  
+  const normalize = (str) => String(str).toLowerCase().replace(/[^a-z0-9]/g, '');
+  const normalizedInput = normalize(inputCategory);
+  
+  let bestMatchKey = undefined;
+  let minDistance = Infinity;
+
+  for (const key of Object.keys(CATEGORY_MAP)) {
+    const normalizedKey = normalize(key);
+    
+    if (normalizedInput === normalizedKey) {
+      return CATEGORY_MAP[key];
+    }
+    
+    // Calculate distance
+    const dist = levenshtein(normalizedInput, normalizedKey);
+    
+    // Always keep the closest match
+    if (dist < minDistance) {
+      minDistance = dist;
+      bestMatchKey = key;
+    }
+  }
+
+  // Si hay al menos un match y no es infinito (siempre habrá porque iteramos)
+  if (bestMatchKey !== undefined) {
+    console.log(`[Fuzzy Match] Mapped "${inputCategory}" to "${bestMatchKey}" (distance: ${minDistance})`);
+    return CATEGORY_MAP[bestMatchKey];
+  }
+
+  return undefined;
+}
+
 async function getCsrfToken() {
   try {
     const response = await fetch('/libs/granite/csrf/token.json');
@@ -203,7 +265,7 @@ async function createEquipments(data) {
     
     let categoriaMapped = null;
     if (categoriaExcel !== null) {
-      categoriaMapped = CATEGORY_MAP[categoriaExcel];
+      categoriaMapped = fuzzyMatchCategory(categoriaExcel);
       if (categoriaMapped === undefined) {
         console.warn(`Category not found in map: "${categoriaExcel}". Using "" as fallback.`);
         categoriaMapped = "";
