@@ -464,6 +464,53 @@
         </div>
       </div>
 
+      <!-- Module 6: Cloud Specs Autofiller -->
+      <div class="accordion-item">
+        <div class="accordion-header">
+          <div class="accordion-header-left">
+            <div class="module-icon module-icon--vdm">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </div>
+            <div class="module-header-info">
+              <div class="module-title-row">
+                <h3 class="module-title">Cloud Specs Autofiller</h3>
+                <button class="info-btn" data-module="cloudSpecsAutofiller" type="button" aria-label="Show info">i</button>
+              </div>
+              <p class="module-desc">Paste Excel cells to auto-complete the Cloud specs table.</p>
+              <div class="module-tags">
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="10" rx="2" />
+                    <circle cx="12" cy="5" r="2" />
+                    <path d="M12 7v4" />
+                  </svg>Bot</span>
+                <span class="module-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  </svg>CF</span>
+              </div>
+            </div>
+          </div>
+          <span class="accordion-icon">&#9662;</span>
+        </div>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <textarea id="cloudSpecsInput" placeholder="Paste Excel cells here..." rows="5"></textarea>
+
+            <div class="autofill-controls">
+              <button id="btnCloudSpecsAutofill" class="btn-search">AUTOFILL CLOUD SPECS</button>
+            </div>
+
+            <p id="cloudSpecsStatus" class="autofill-status" style="display: none;"></p>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /tab-panel automation -->
 
   </div><!-- /tab-panels -->
@@ -507,6 +554,7 @@
   <script src="../modules/vdm-equipment-creator/popup-vdm-equipment-creator.js"></script>
   <script src="../modules/vdm-category-creator/popup-vdm-category-creator.js"></script>
   <script src="../modules/publish-path-generator/popup-publish-path-generator.js"></script>
+  <script src="../modules/cloud-specs-autofiller/popup-cloud-specs-autofiller.js"></script>
 </body>
 
 </html>

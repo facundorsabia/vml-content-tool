@@ -88,5 +88,13 @@ const MODULES_DOCUMENTATION = {
       "Step 2 (Category Creator): Establishes the category/subcategory structures, linking options.",
       "Step 3 (Options Autofiller): Injects specifications/selections (S/O/-) onto the options page grids, matching rows by the option title in the first column."
     ]
+  },
+  cloudSpecsAutofiller: {
+    title: "Cloud Specs Autofiller",
+    description: "Autofill Cloud specs tables with Excel/TSV data.",
+    validations: [
+      "Transforms copied TSV data into AEM Cloud Specs format with ^^ separators.",
+      "Supports injecting multiple fields automatically."
+    ]
   }
 };
