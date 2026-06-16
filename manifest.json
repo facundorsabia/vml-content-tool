@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VML Content Tool",
-  "version": "4.6",
+  "version": "4.7",
   "description": "Suite de herramientas para Content Editors de VML.",
   "permissions": [
       "storage",
@@ -35,7 +35,8 @@
         "modules/vdm-options-autofiller/content-vdm-options-autofiller.js",
         "modules/vdm-equipment-creator/content-vdm-equipment-creator.js",
         "modules/vdm-category-creator/content-vdm-category-creator.js",
-        "modules/publish-path-generator/content-publish-path-generator.js"
+        "modules/publish-path-generator/content-publish-path-generator.js",
+        "modules/cloud-specs-autofiller/content-cloud-specs-autofiller.js"
       ],
       "css": [
         "core/content.css"
