@@ -131,11 +131,11 @@ Every developer and AI agent working on this extension must satisfy the followin
 
 ---
 
-## 🤖 Automatic Version Increment Rule
+## 🤖 Semantic Versioning (SemVer) Rule
 > [!IMPORTANT]
-> **Automatic Version Increment on Commit:**
-> Each time a Git commit is executed, the `manifest.json` version number MUST automatically increment by `0.1` (e.g., `2.0` $\rightarrow$ `2.1`).
-> This behavior is automated via a local Git `pre-commit` hook (stored at `.git/hooks/pre-commit`). If modifying codebase configuration or building features, ensure this hook remains intact so version releases are tracked accurately on every commit.
+> **Manual Semantic Versioning:**
+> This repository uses manual Semantic Versioning (MAJOR.MINOR.PATCH).
+> You must **never** automatically increment the version. The human developer will manually update the `version` field in `manifest.json` before committing to specify if a change is a patch, a minor improvement, or a major update.
 
 ---
 

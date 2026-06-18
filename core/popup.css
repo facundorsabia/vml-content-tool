@@ -91,6 +91,48 @@ body {
 }
 
 /* ============================================
+   UPDATE BANNER
+   ============================================ */
+.update-banner {
+  background: linear-gradient(135deg, rgba(45, 158, 158, 0.15), rgba(45, 158, 158, 0.05));
+  border-bottom: 1px solid var(--border-accent);
+  padding: 10px 24px;
+}
+
+.update-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.update-banner-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-light);
+  letter-spacing: 0.5px;
+}
+
+.update-banner-btn {
+  padding: 6px 14px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.update-banner-btn:hover {
+  background: var(--accent-light);
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+/* ============================================
    MAIN CONTENT — Two-column grid
    ============================================ */
 .main-content {

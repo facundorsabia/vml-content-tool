@@ -12,6 +12,46 @@ document.addEventListener('DOMContentLoaded', () => {
     appVersionEl.textContent = `v${manifest.version} - Internal Release`;
   }
 
+  // ── UPDATE CHECKER ──────────────────────────────────────────────
+  async function checkForUpdates() {
+    try {
+      const manifest = chrome.runtime.getManifest();
+      const localVersion = manifest.version;
+      const response = await fetch('https://raw.githubusercontent.com/facundorsabia/vml-content-tool/main/manifest.json');
+      
+      if (!response.ok) return;
+      
+      const remoteManifest = await response.json();
+      const remoteVersion = remoteManifest.version;
+      
+      if (isVersionGreater(remoteVersion, localVersion)) {
+        const banner = document.getElementById('updateBanner');
+        if (banner) {
+          banner.style.display = 'flex';
+        }
+      }
+    } catch (e) {
+      console.warn('[VML Content Tool] Update check failed:', e);
+    }
+  }
+
+  function isVersionGreater(v1, v2) {
+    const parts1 = v1.split('.').map(Number);
+    const parts2 = v2.split('.').map(Number);
+    
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+      const num1 = parts1[i] || 0;
+      const num2 = parts2[i] || 0;
+      if (num1 > num2) return true;
+      if (num1 < num2) return false;
+    }
+    return false;
+  }
+
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest) {
+    checkForUpdates();
+  }
+
   // ── TAB SWITCHING ──────────────────────────────────────────────
   const tabButtons = document.querySelectorAll('.tab-btn');
   const tabPanels  = document.querySelectorAll('.tab-panel');
