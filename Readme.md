@@ -51,7 +51,7 @@ vml-content-tool/
 * Haz clic en el icono de la extensión para abrir el panel de control.
 * Activa el switch para resaltar los espacios `&nbsp;` en la página actual.
 * Los espacios detectados aparecerán con un resaltado **rojo**.
-* **Limpieza en AEM Editor**: Estando en páginas de edición de AEM, aparecerá automáticamente un botón flotante **🧹 Correct NBSPs** que eliminará los NBSPs de todos los inputs, textareas y editores enriquecidos, aplicando un recorte inteligente al inicio/final de las frases (removiendo el espacio redundante) y disparando los eventos necesarios para que AEM guarde el texto limpio.
+* **Salvaguarda de Edición & Panel de Contexto**: Para proteger la integridad del contenido en el modo de edición de AEM, la inyección directa de rectángulos rojos se deshabilita automáticamente. En su lugar, el botón flotante **🧹 Correct NBSPs** actuará como detector principal. Cuenta con una flecha expandible (▲) que, al presionarla, despliega un panel flotante de sólo lectura mostrando el fragmento exacto de texto que rodea a cada NBSP detectado, permitiéndote ubicarlos visualmente sin alterar el DOM original. Al clickear el botón principal, se aplicará el recorte inteligente y se enviarán los eventos necesarios para que AEM guarde el texto limpio.
 * **Limpieza global**: Al pegar datos en cualquier textarea de la extensión, los NBSP se limpian y convierten automáticamente a espacios normales para evitar fallas.
 
 ### 3. HTag Visualizer

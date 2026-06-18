@@ -19,6 +19,10 @@ chrome.storage.local.get(['active'], (result) => {
 });
 
 function runDetector(alpha) {
+  if (checkIsAemEditor()) {
+    console.info('[VML Content Tool] NBSP Visualizer (DOM mutation) disabled in AEM Editor. Floating button handles detection safely.');
+    return;
+  }
   const charNBSP = "\u00A0";
 
   // Inyectar estilo dinámico con la opacidad del slider
@@ -170,6 +174,75 @@ function initAemEditorNbspCorrector() {
       background: rgba(16, 185, 129, 0.9); /* Esmeralda */
       border-color: rgba(255, 255, 255, 0.25);
     }
+    .vml-btn-group {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    #vml-nbsp-expand-btn {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 50px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #vml-nbsp-expand-btn:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    #vml-nbsp-context-panel {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      margin-bottom: 12px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 12px;
+      width: 280px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+    }
+    .vml-nbsp-context-panel-title {
+      font-size: 11px;
+      font-weight: bold;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .vml-nbsp-context-item {
+      font-size: 11px;
+      color: #cbd5e1;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      word-break: break-all;
+      line-height: 1.4;
+    }
+    .vml-nbsp-context-item:last-child {
+      border-bottom: none;
+    }
+    .vml-nbsp-highlight {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-radius: 3px;
+      padding: 0 3px;
+      font-weight: bold;
+      margin: 0 2px;
+    }
   `;
   document.head.appendChild(style);
 
@@ -178,6 +251,21 @@ function initAemEditorNbspCorrector() {
   container.id = 'vml-nbsp-corrector-container';
   container.style.display = 'none'; // ocultar por defecto
   
+  const panel = document.createElement('div');
+  panel.id = 'vml-nbsp-context-panel';
+  
+  const panelTitle = document.createElement('div');
+  panelTitle.className = 'vml-nbsp-context-panel-title';
+  panelTitle.textContent = 'Detected Contexts';
+  panel.appendChild(panelTitle);
+
+  const contextList = document.createElement('div');
+  contextList.id = 'vml-nbsp-context-list';
+  panel.appendChild(contextList);
+
+  const btnGroup = document.createElement('div');
+  btnGroup.className = 'vml-btn-group';
+
   const button = document.createElement('button');
   button.id = 'vml-correct-nbsp-btn';
   button.className = 'vml-btn-correct';
@@ -199,7 +287,26 @@ function initAemEditorNbspCorrector() {
   button.appendChild(icon);
   button.appendChild(text);
   button.appendChild(badge);
-  container.appendChild(button);
+
+  const expandBtn = document.createElement('button');
+  expandBtn.id = 'vml-nbsp-expand-btn';
+  expandBtn.innerHTML = '&#9650;'; // Up arrow
+
+  expandBtn.addEventListener('click', () => {
+    if (panel.style.display === 'flex') {
+      panel.style.display = 'none';
+      expandBtn.innerHTML = '&#9650;';
+    } else {
+      panel.style.display = 'flex';
+      expandBtn.innerHTML = '&#9660;';
+    }
+  });
+
+  btnGroup.appendChild(button);
+  btnGroup.appendChild(expandBtn);
+
+  container.appendChild(panel);
+  container.appendChild(btnGroup);
   document.body.appendChild(container);
 
   // 3. Listener para el evento click
@@ -262,6 +369,26 @@ function getEditableElements(root = document) {
   return elements;
 }
 
+function getNbspContexts(elInfo) {
+  const charNBSP = "\u00A0";
+  const contexts = [];
+  try {
+    const text = elInfo.type === 'input' ? (elInfo.element.value || '') : (elInfo.element.textContent || '');
+    let match;
+    const regex = new RegExp(charNBSP, 'g');
+    while ((match = regex.exec(text)) !== null) {
+      const start = Math.max(0, match.index - 15);
+      const end = Math.min(text.length, match.index + 16);
+      let snippet = text.substring(start, end);
+      snippet = snippet.replace(/\n/g, ' ').replace(/\s+/g, ' '); // Clean up newlines/extra spaces
+      contexts.push(snippet);
+    }
+  } catch (e) {
+    // Ignore
+  }
+  return contexts;
+}
+
 function countNbspInElement(elInfo) {
   const charNBSP = "\u00A0";
   try {
@@ -280,13 +407,20 @@ function countNbspInElement(elInfo) {
 function updateFloatingButtonState() {
   const elements = getEditableElements();
   let totalNbsp = 0;
+  let allContexts = [];
+
   elements.forEach(elInfo => {
-    totalNbsp += countNbspInElement(elInfo);
+    const contexts = getNbspContexts(elInfo);
+    totalNbsp += contexts.length;
+    allContexts = allContexts.concat(contexts);
   });
 
   const container = document.getElementById('vml-nbsp-corrector-container');
   const badge = document.getElementById('vml-nbsp-badge');
   const btnText = document.querySelector('#vml-correct-nbsp-btn .vml-btn-text');
+  const contextList = document.getElementById('vml-nbsp-context-list');
+  const panel = document.getElementById('vml-nbsp-context-panel');
+  const expandBtn = document.getElementById('vml-nbsp-expand-btn');
   
   if (container) {
     if (totalNbsp > 0) {
@@ -297,10 +431,32 @@ function updateFloatingButtonState() {
           badge.style.display = 'inline-block';
         }
         btnText.textContent = `Correct ${totalNbsp} NBSP${totalNbsp > 1 ? 's' : ''}`;
+
+        if (contextList) {
+          contextList.innerHTML = '';
+          allContexts.forEach(ctx => {
+            const item = document.createElement('div');
+            item.className = 'vml-nbsp-context-item';
+            
+            const parts = ctx.split("\u00A0");
+            parts.forEach((part, index) => {
+              item.appendChild(document.createTextNode(part));
+              if (index < parts.length - 1) {
+                const span = document.createElement('span');
+                span.className = 'vml-nbsp-highlight';
+                span.textContent = 'NBSP';
+                item.appendChild(span);
+              }
+            });
+            contextList.appendChild(item);
+          });
+        }
       }
     } else {
       if (btnText && !btnText.dataset.corrected) {
         container.style.display = 'none';
+        if (panel) panel.style.display = 'none';
+        if (expandBtn) expandBtn.innerHTML = '&#9650;';
       }
     }
   }

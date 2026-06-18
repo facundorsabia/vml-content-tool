@@ -139,6 +139,13 @@ Every developer and AI agent working on this extension must satisfy the followin
 
 ---
 
+## 🚫 No Automated Commits Rule
+> [!IMPORTANT]
+> **Never Execute Commits:**
+> You must **never** execute `git commit` commands after finishing your modifications. Committing code is strictly reserved as a task for the human developer. Leave the modified files as they are for the human to review and commit manually.
+
+---
+
 ## 🗣️ Agent Response & Token Optimization Rules
 > [!IMPORTANT]
 > * **Language:** All AI Agent responses, explanations, and summaries MUST be written exclusively in **English**, regardless of the language utilized by the user.
