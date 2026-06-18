@@ -5,6 +5,10 @@
 
 chrome.storage.local.get(['htagsActive'], (result) => {
   if (result.htagsActive) {
+    if (window.location.href.includes('editor')) {
+      console.warn('[VML Content Tool] HTag Visualizer is disabled in AEM Editor mode to prevent saving injected badges.');
+      return;
+    }
     runHTagVisualizer();
   }
 });

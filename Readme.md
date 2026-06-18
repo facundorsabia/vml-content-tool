@@ -59,6 +59,7 @@ vml-content-tool/
 * Activa el switch **ENCENDIDO** para inyectar etiquetas visuales ('H1', 'H2', etc.) de forma contigua a cada encabezado de la página.
 * Diseñado para auditorías de QA para verificar la estructura semántica de encabezados de forma rápida, evitando abrir dev tools.
 * Al apagar el módulo, las etiquetas se remueven automáticamente gracias al refresco de estado.
+* **Salvaguarda de Edición**: El módulo se desactiva automáticamente en las páginas de edición de AEM (rutas que contienen `editor`) para evitar que las etiquetas inyectadas se guarden accidentalmente en el contenido publicado.
 
 ### 4. Exact Disclosure Finder
 * Escribe o pega la frase exacta que deseas buscar en el cuadro de texto.
