@@ -3,9 +3,19 @@
 // Detecta y resalta visualmente etiquetas H1-H6 en la página
 // ============================================
 
+function checkIsAemEditor() {
+  try {
+    const href = window.top.location.href;
+    return href.toLowerCase().includes('aem') && href.toLowerCase().includes('editor');
+  } catch (e) {
+    return window.location.href.toLowerCase().includes('aem') && window.location.href.toLowerCase().includes('editor');
+  }
+}
+
 chrome.storage.local.get(['htagsActive'], (result) => {
   if (result.htagsActive) {
-    if (window.location.href.includes('editor')) {
+    if (checkIsAemEditor()) {
+      console.info('[VML Content Tool] HTags Visualizer disabled in AEM Editor to protect page structure.');
       return;
     }
     runHTagVisualizer();
