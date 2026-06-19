@@ -51,7 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
             category.toLowerCase().includes('category') || 
             feature.toLowerCase().includes('feature') ||
             feature.toLowerCase().includes('sub-category') ||
-            feature.toLowerCase().includes('title')
+            feature.toLowerCase().includes('subcategory') ||
+            feature.toLowerCase().includes('title') ||
+            requirement.toLowerCase().includes('title') ||
+            subReq.toLowerCase().includes('model')
         )) {
           continue;
         }
