@@ -332,8 +332,11 @@ function getEditableElements(root = document) {
       const type = input.getAttribute('type')?.toLowerCase();
       const skipTypes = ['hidden', 'submit', 'button', 'image', 'checkbox', 'radio', 'file', 'range', 'reset'];
       
-      // Filtramos tipos ignorados y excluimos la UI nativa de AEM
-      if ((!type || !skipTypes.includes(type)) && !isAemUiElement(input)) {
+      // Verificamos que el elemento sea visible en pantalla
+      const isVisible = !!(input.offsetWidth || input.offsetHeight || input.getClientRects().length);
+      
+      // Filtramos tipos ignorados, excluimos UI nativa y elementos ocultos (como textareas de respaldo del RTE)
+      if (isVisible && (!type || !skipTypes.includes(type)) && !isAemUiElement(input)) {
         elements.push({
           type: 'input',
           element: input
