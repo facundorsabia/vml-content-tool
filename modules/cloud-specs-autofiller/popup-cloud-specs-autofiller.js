@@ -17,6 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
     statusEl.style.display = 'block';
   }
 
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+  }
+
   function parseCloudSpecs(raw) {
     const lines = raw.split(/\r?\n/);
     const fields = [];
@@ -61,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // <p>Value</p>
   function formatDataAsHtml(fields) {
     return fields.map(field => {
-      const title = field.title || '';
+      const title = escapeHtml(field.title || '');
       let valueHtml = '';
       
       if (field.value) {
@@ -69,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         valueHtml = valLines
           .map(l => l.trim())
           .filter(l => l !== '')
-          .map(l => `<p>${l}</p>`)
+          .map(l => `<p>${escapeHtml(l)}</p>`)
           .join('\n');
       } else {
         valueHtml = '<p><br></p>';

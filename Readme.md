@@ -35,7 +35,9 @@ vml-content-tool/
 │   ├── vdm-category-creator/      # Módulo: VDM Category Creator
 │   ├── vdm-equipment-creator/     # Módulo: VDM Equipment Mass Creator
 │   ├── vdm-options-autofiller/    # Módulo: VDM Options Autofiller
-│   └── vdm-specs-autofiller/      # Módulo: Specs VDM Autofiller
+│   ├── vdm-specs-autofiller/      # Módulo: Specs VDM Autofiller
+│   ├── cloud-specs-autofiller/    # Módulo: Cloud Specs Autofiller
+│   └── cloud-options-autofiller/  # Módulo: Cloud Options Autofiller
 ├── .antigravityrules              # Reglas de Agente AI
 └── Readme.md                      # Documentación del usuario
 ```
@@ -122,6 +124,12 @@ Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para
   - Para Pages y Assets: Extrae el nombre o archivo directamente del final del path (eliminando la extensión `.html` si aplica).
   - Para Carpetas de AEM: Extrae el título real (`dc:title` o `jcr:title`) de cada elemento hijo del repositorio JCR vía Sling API (con fallback de raspado del DOM si la llamada API fallara).
 * **Formato Listo para Tickets**: Copia al portapapeles una cadena formateada con la URL de la carpeta padre seguida de `>>> [Título/Nombre]`, lista para ser pegada en tus tickets de Jira o herramientas internas.
+
+### 8. Cloud Options Autofiller
+* Automatiza la carga masiva de opciones para Content Fragments "Cloud" desde Excel.
+* **Agrupación Inteligente**: Clasifica, agrupa y estructura la información automáticamente siguiendo jerarquías estrictas: Category > Feature > Standard/Optional.
+* **Espaciado Visual y Limpieza**: Ignora valores vacíos o nulos (guiones `-`), y aplica espaciados legibles entre grupos para una lectura clara en el entorno de autoría.
+* **Transformación Tipográfica**: Reconoce abreviaturas legales desde Excel como `(R)`, `(TM)` y `(C)` y las inyecta en el DOM de AEM como los símbolos formales `®`, `™` y `©`.
 
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
