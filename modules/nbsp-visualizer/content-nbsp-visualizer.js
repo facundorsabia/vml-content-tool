@@ -319,13 +319,21 @@ function initAemEditorNbspCorrector() {
 function getEditableElements(root = document) {
   let elements = [];
 
+  // Función auxiliar para ignorar la UI estructural de AEM
+  // Intencionalmente NO excluimos .cq-dialog para permitir la limpieza de sus inputs
+  const isAemUiElement = (el) => {
+    return el.closest('.coral-Shell, .coral-Panel, .cq-SidePanel, #OverlayWrapper, .globalnav-header');
+  };
+
   // 1. Inputs estándar y textareas
   try {
     const inputs = root.querySelectorAll('input, textarea');
     inputs.forEach(input => {
       const type = input.getAttribute('type')?.toLowerCase();
       const skipTypes = ['hidden', 'submit', 'button', 'image', 'checkbox', 'radio', 'file', 'range', 'reset'];
-      if (!type || !skipTypes.includes(type)) {
+      
+      // Filtramos tipos ignorados y excluimos la UI nativa de AEM
+      if ((!type || !skipTypes.includes(type)) && !isAemUiElement(input)) {
         elements.push({
           type: 'input',
           element: input
@@ -340,10 +348,12 @@ function getEditableElements(root = document) {
   try {
     const editables = root.querySelectorAll('[contenteditable="true"]');
     editables.forEach(el => {
-      elements.push({
-        type: 'contenteditable',
-        element: el
-      });
+      if (!isAemUiElement(el)) {
+        elements.push({
+          type: 'contenteditable',
+          element: el
+        });
+      }
     });
   } catch (e) {
     console.debug('[VML NBSP] Error al escanear contenteditables:', e);
