@@ -1,5 +1,5 @@
 // ============================================
-// VML Content Tool v2.0 — Content: Cloud Specs Autofiller
+// VML Content Tool v2.0 — Content: Cloud Options Autofiller
 // ============================================
 
 /**
@@ -10,8 +10,8 @@ function dispatchEvents(element) {
   element.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-function findSpecsMultifield(root) {
-  let multifield = root.querySelector('coral-multifield[data-granite-coral-multifield-name="specs"], coral-multifield[data-element="specs"]');
+function findOptionsMultifield(root) {
+  let multifield = root.querySelector('coral-multifield[data-granite-coral-multifield-name="options"], coral-multifield[data-element="options"], coral-multifield[data-granite-coral-multifield-name="specs"], coral-multifield[data-element="specs"]');
   if (multifield) return multifield;
 
   const iframes = root.querySelectorAll('iframe');
@@ -19,7 +19,7 @@ function findSpecsMultifield(root) {
     try {
       const doc = iframe.contentDocument || iframe.contentWindow?.document;
       if (doc && doc.body) {
-        multifield = findSpecsMultifield(doc.body);
+        multifield = findOptionsMultifield(doc.body);
         if (multifield) return multifield;
       }
     } catch (e) {
@@ -30,14 +30,14 @@ function findSpecsMultifield(root) {
 }
 
 /**
- * Fills the Cloud Specs multifield in AEM.
- * @param {string[]} formattedRows Array of HTML strings for each row
+ * Fills the Cloud Options multifield in AEM.
+ * @param {string[]} formattedRows Array of HTML strings for each grouped category row
  */
-async function fillCloudSpecs(formattedRows) {
-  // Find the specs multifield recursively
-  const multifield = findSpecsMultifield(document.body);
+async function fillCloudOptions(formattedRows) {
+  // Find the options multifield recursively
+  const multifield = findOptionsMultifield(document.body);
   if (!multifield) {
-    return { success: false, error: 'No se encontró el multifield con data-granite-coral-multifield-name="specs" en la página.' };
+    return { success: false, error: 'No se encontró el multifield con data-granite-coral-multifield-name="options" en la página.' };
   }
 
   // Get all current multifield items
@@ -59,7 +59,7 @@ async function fillCloudSpecs(formattedRows) {
     if (!htmlValue) continue;
 
     // 1. Update the hidden input that AEM usually reads on save
-    const hiddenInput = item.querySelector('input[type="hidden"][name="specs"], input[data-cfm-multieditor-inputfield="true"]');
+    const hiddenInput = item.querySelector('input[type="hidden"][name="options"], input[type="hidden"][name="specs"], input[data-cfm-multieditor-inputfield="true"]');
     if (hiddenInput) {
       hiddenInput.value = htmlValue;
       dispatchEvents(hiddenInput);
@@ -73,14 +73,13 @@ async function fillCloudSpecs(formattedRows) {
     }
 
     // 2. Update any visible Rich Text Editor if it exists
-    // (AEM might use .coral-RichText-editable, .ql-editor, or an iframe)
     const rteEditable = item.querySelector('.coral-RichText-editable, .ql-editor, [contenteditable="true"]');
     if (rteEditable) {
       setSafeHTML(rteEditable, htmlValue);
       dispatchEvents(rteEditable);
     }
 
-    // If there's an iframe for the RTE (sometimes AEM loads RTE in an iframe)
+    // If there's an iframe for the RTE
     const iframe = item.querySelector('iframe');
     if (iframe) {
       try {
@@ -100,18 +99,18 @@ async function fillCloudSpecs(formattedRows) {
   }
 
   if (formattedRows.length > items.length) {
-    console.warn(`[Cloud Specs Autofiller] Hay más filas en el Excel (${formattedRows.length}) que campos creados en AEM (${items.length}).`);
+    console.warn(`[Cloud Options Autofiller] Hay más categorías en el Excel (${formattedRows.length}) que campos creados en AEM (${items.length}).`);
   }
 
   return { success: true, filled: filledCount };
 }
 
 // Global Message Listener
-if (!window.vmlCloudSpecsInjected) {
-  window.vmlCloudSpecsInjected = true;
+if (!window.vmlCloudOptionsInjected) {
+  window.vmlCloudOptionsInjected = true;
   chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
-    if (req.action === 'autoFillCloudSpecs') {
-      fillCloudSpecs(req.data).then(sendResponse).catch(err => {
+    if (req.action === 'autoFillCloudOptions') {
+      fillCloudOptions(req.data).then(sendResponse).catch(err => {
         sendResponse({ success: false, error: err.message });
       });
       return true; // Indicates async response

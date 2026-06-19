@@ -46,9 +46,15 @@ vml-content-tool/
 │   ├── vdm-options-autofiller/    # VDM Options Autofiller module
 │   │   ├── content-vdm-options-autofiller.js
 │   │   └── popup-vdm-options-autofiller.js
-│   └── vdm-specs-autofiller/      # Specs VDM Autofiller module
-│       ├── content-vdm-specs-autofiller.js
-│       └── popup-vdm-specs-autofiller.js
+│   ├── vdm-specs-autofiller/      # Specs VDM Autofiller module
+│   │   ├── content-vdm-specs-autofiller.js
+│   │   └── popup-vdm-specs-autofiller.js
+│   ├── cloud-specs-autofiller/    # Cloud Specs Autofiller module
+│   │   ├── content-cloud-specs-autofiller.js
+│   │   └── popup-cloud-specs-autofiller.js
+│   └── cloud-options-autofiller/  # Cloud Options Autofiller module
+│       ├── content-cloud-options-autofiller.js
+│       └── popup-cloud-options-autofiller.js
 ├── .antigravityrules              # AI Agent System Instructions (This file)
 └── Readme.md                      # End-user documentation
 ```
