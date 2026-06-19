@@ -112,13 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const cat of finalCategoryOrder) {
       let html = `<p>${escapeHtml(cat)}</p>\n<p>^^</p>\n`;
       
+      let isFirstBlock = true;
       const features = Object.keys(categories[cat]);
       for (let i = 0; i < features.length; i++) {
         const feature = features[i];
-        if (feature) {
-          html += `<p><b>${escapeHtml(feature)}</b></p>\n`;
-        }
-        
         const optGroups = categories[cat][feature];
         const sortedOpts = Object.keys(optGroups).sort((a, b) => {
            const orderA = a === 'Standard' ? 1 : a === 'Optional' ? 2 : a === 'Packages' ? 3 : 4;
@@ -126,10 +123,30 @@ document.addEventListener('DOMContentLoaded', () => {
            return orderA - orderB;
         });
 
-        for (const opt of sortedOpts) {
-           if (opt) {
-             html += `<p><i>${escapeHtml(opt)}</i></p>\n`;
+        for (let j = 0; j < sortedOpts.length; j++) {
+           const opt = sortedOpts[j];
+           let pContent = '';
+           
+           if (!isFirstBlock) {
+             pContent += '<br>';
            }
+           
+           if (j === 0 && feature) {
+             pContent += `<b>${escapeHtml(feature)}</b>`;
+             if (opt) {
+               pContent += '<br>';
+             }
+           }
+           
+           if (opt) {
+             pContent += `<i>${escapeHtml(opt)}</i>`;
+           }
+           
+           if (pContent) {
+             html += `<p>${pContent}</p>\n`;
+           }
+           
+           isFirstBlock = false;
            
            const reqs = optGroups[opt];
            if (reqs && reqs.length > 0) {
@@ -139,11 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
              }
              html += `</ul>\n`;
            }
-        }
-        
-        // Add a spacing line after each feature group, except the very last one to keep it clean
-        if (i < features.length - 1) {
-          html += `<p><br></p>\n`;
         }
       }
       formattedRows.push(html.trim());
