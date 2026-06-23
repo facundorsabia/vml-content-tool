@@ -57,7 +57,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 24px;
+  padding: 10px 16px;
   background: var(--bg-header);
   border-bottom: 1px solid var(--border);
 }
@@ -148,7 +148,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 12px 16px;
   background: var(--bg-module);
   cursor: pointer;
   transition: background 0.3s ease;
@@ -180,15 +180,15 @@ body {
 .accordion-inner {
   min-height: 0;
   overflow: hidden;
-  padding: 0 24px;
+  padding: 0 16px;
 }
 
 .accordion-inner> :first-child {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .accordion-inner> :last-child {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .module-title {
@@ -389,7 +389,7 @@ input[type="range"]::-moz-range-track {
    ============================================ */
 textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: var(--bg-input);
   border: 1px solid var(--border-accent);
   border-radius: var(--radius-sm);
@@ -400,8 +400,8 @@ textarea {
   resize: vertical;
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 12px;
-  min-height: 80px;
+  margin-bottom: 8px;
+  min-height: 65px;
 }
 
 textarea::placeholder {
@@ -809,16 +809,16 @@ textarea:focus {
 
 .accordion-header-left {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex: 1;
   min-width: 0;
 }
 
 .module-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -826,8 +826,8 @@ textarea:focus {
 }
 
 .module-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   stroke: #fff;
 }
 
@@ -1362,4 +1362,72 @@ textarea:focus {
 .vml-modal-footer {
   padding: 14px 16px;
   border-top: 1px solid var(--border);
+}
+
+/* --- Custom Scrollbar --- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-body);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* --- Compact Badge --- */
+.compact-badge {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+.compact-badge--vdm {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.compact-badge--cf {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* --- Pin Toggle --- */
+.pin-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+.pin-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.pin-toggle input {
+  display: none;
+}
+.pin-toggle svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+.pin-toggle input:checked + svg {
+  stroke: var(--gold);
+  fill: rgba(201, 169, 110, 0.2);
+  transform: rotate(45deg);
 }

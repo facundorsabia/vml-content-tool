@@ -68,19 +68,60 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   tabButtons.forEach(btn => {
-    btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+    btn.addEventListener('click', () => {
+      activateTab(btn.dataset.tab);
+      chrome.storage.local.set({ lastActiveTab: btn.dataset.tab });
+    });
   });
 
-  // Abrir Productivity por defecto
-  activateTab('productivity');
+  // Event listener para el pin toggle
+  const pinMandO = document.getElementById('pinMandO');
+  if (pinMandO) {
+    pinMandO.addEventListener('change', (e) => {
+      chrome.storage.local.set({ pinMandO: e.target.checked });
+    });
+  }
+
+  // Restaurar estado desde storage o abrir Productivity por defecto
+  chrome.storage.local.get(['lastActiveTab', 'lastActiveAccordion', 'pinMandO'], (result) => {
+    if (pinMandO) {
+      pinMandO.checked = result.pinMandO || false;
+    }
+
+    if (result.pinMandO) {
+      activateTab('automation');
+      const item = document.getElementById('pinMandO').closest('.accordion-item');
+      if (item) item.classList.add('active');
+      return;
+    }
+
+    const tabToActivate = result.lastActiveTab || 'productivity';
+    activateTab(tabToActivate);
+
+    if (result.lastActiveAccordion) {
+      // Buscar el accordion que contenga el info-btn con el modulo guardado
+      const infoBtn = document.querySelector(`.info-btn[data-module="${result.lastActiveAccordion}"]`);
+      if (infoBtn) {
+        const item = infoBtn.closest('.accordion-item');
+        if (item) {
+          // Asegurarnos de que su tab panel sea el activo (por si hay inconsistencia)
+          const panel = item.closest('.tab-panel');
+          if (panel) {
+            activateTab(panel.dataset.panel);
+          }
+          item.classList.add('active');
+        }
+      }
+    }
+  });
 
 
   // ── ACCORDION ─────────────────────────────────────────────────
   // Delegación de eventos: funciona para todos los panels sin importar cuál esté activo
   document.querySelectorAll('.accordion-header').forEach(header => {
     header.addEventListener('click', (e) => {
-      // Si el clic proviene de un info-btn o dentro de él, ignorarlo
-      if (e.target.closest('.info-btn')) {
+      // Si el clic proviene de un info-btn o pin-toggle, ignorarlo
+      if (e.target.closest('.info-btn') || e.target.closest('.pin-toggle')) {
         return;
       }
 
@@ -96,6 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // Si no estaba abierto, lo abrimos
       if (!isOpen) {
         item.classList.add('active');
+        const infoBtn = header.querySelector('.info-btn');
+        if (infoBtn) {
+          chrome.storage.local.set({ lastActiveAccordion: infoBtn.dataset.module });
+        }
+      } else {
+        chrome.storage.local.remove('lastActiveAccordion');
       }
     });
   });
