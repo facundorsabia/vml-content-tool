@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('btnCloudOptionsAutofill');
   const statusEl = document.getElementById('cloudOptionsStatus');
 
+  // --- Auto-Save Textarea Content ---
+  const storageKey = 'saved_cloudOptionsInput';
+  chrome.storage.local.get([storageKey], (result) => {
+    if (result[storageKey]) {
+      textarea.value = result[storageKey];
+    }
+  });
+  textarea.addEventListener('input', () => {
+    chrome.storage.local.set({ [storageKey]: textarea.value });
+  });
+
   if (!textarea || !btn || !statusEl) return;
 
   function showStatus(type, message) {

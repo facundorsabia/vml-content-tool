@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('btnAutofill');
   const statusEl = document.getElementById('autofillStatus');
 
+  // --- Auto-Save Textarea Content ---
+  const storageKey = 'saved_autofillInput';
+  chrome.storage.local.get([storageKey], (result) => {
+    if (result[storageKey]) {
+      textarea.value = result[storageKey];
+    }
+  });
+  textarea.addEventListener('input', () => {
+    chrome.storage.local.set({ [storageKey]: textarea.value });
+  });
+
   /**
    * Muestra un mensaje de estado en el popup con color según el tipo.
    * @param {'success'|'error'|'info'} type

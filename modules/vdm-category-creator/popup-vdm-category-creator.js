@@ -3,6 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const textarea = document.getElementById('vdmCategoryInput');
   const statusEl = document.getElementById('vdmCategoryStatus');
 
+  // --- Auto-Save Textarea Content ---
+  const storageKey = 'saved_vdmCategoryInput';
+  chrome.storage.local.get([storageKey], (result) => {
+    if (result[storageKey]) {
+      textarea.value = result[storageKey];
+    }
+  });
+  textarea.addEventListener('input', () => {
+    chrome.storage.local.set({ [storageKey]: textarea.value });
+  });
+
   if (!btnCreate || !textarea || !statusEl) return;
 
   btnCreate.addEventListener('click', async () => {
