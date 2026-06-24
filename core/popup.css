@@ -42,6 +42,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   width: 420px;
   font-family: 'Inter', 'Segoe UI', sans-serif;
@@ -169,12 +173,15 @@ body {
 }
 
 .accordion-content {
-  display: none;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--bg-module);
+  overflow: hidden;
 }
 
 .accordion-item.active .accordion-content {
-  display: block;
+  grid-template-rows: 1fr;
 }
 
 .accordion-inner {
