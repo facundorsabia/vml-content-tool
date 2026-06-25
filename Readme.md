@@ -131,6 +131,15 @@ Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para
 * **Espaciado Visual y Limpieza**: Ignora valores vacíos o nulos (guiones `-`), y aplica espaciados legibles entre grupos para una lectura clara en el entorno de autoría.
 * **Transformación Tipográfica**: Reconoce abreviaturas legales desde Excel como `(R)`, `(TM)` y `(C)` y las inyecta en el DOM de AEM como los símbolos formales `®`, `™` y `©`.
 
+## 🎨 Interfaz Premium y Experiencia de Usuario (UI/UX)
+
+La herramienta cuenta con un diseño de interfaz de nivel premium enfocado en la productividad y el confort visual:
+
+* **Navegación Dinámica por Pestañas:** Los módulos están organizados en tres categorías principales (Productivity, QA & Audit, Automation & Bots). La navegación superior adopta dinámicamente un color de acento propio (Púrpura, Verde Esmeralda o Azul) según la pestaña activa, facilitando el reconocimiento visual inmediato de la herramienta.
+* **Jerarquía Visual (Sub-Acordeones):** Los procesos secuenciales, como el M&O VDM Process, utilizan un elegante diseño de indentación en forma de "línea de tiempo" o árbol de directorios. Cada sub-paso resalta con un borde lateral cuyo color coincide con el de su título, guiando al ojo de forma intuitiva a través del flujo de trabajo.
+* **Memoria de Estado y Pines:** La extensión recuerda qué módulos tenías abiertos mediante un sistema de retención de estado (`chrome.storage.local`). Si "pineas" un panel, al volver a abrir el popup todo estará exactamente donde lo dejaste.
+* **Limpieza Automática y Micro-animaciones:** Los formularios complejos cuentan con limpieza automática (Auto-Clear) tras una inyección exitosa de datos. Todo el ecosistema de la UI está acompañado de transiciones suaves, hover states reactivos y un cuidado Dark Mode.
+
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)
 
