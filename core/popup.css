@@ -970,19 +970,24 @@ textarea:focus {
   stroke: #fff;
 }
 
-.module-icon--aem {
+.module-icon--publish-path {
   background: linear-gradient(135deg, #5b21b6, #7c3aed);
   box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
 }
 
-.module-icon--finder {
+.module-icon--aem {
   background: linear-gradient(135deg, #6d28d9, #9333ea);
   box-shadow: 0 2px 10px rgba(147, 51, 234, 0.3);
 }
 
+.module-icon--finder {
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+}
+
 .module-icon--nbsp {
-  background: linear-gradient(135deg, #15803d, #16a34a);
-  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.3);
+  background: linear-gradient(135deg, #14532d, #166534);
+  box-shadow: 0 2px 10px rgba(22, 101, 52, 0.3);
 }
 
 .module-icon--htag {
@@ -990,13 +995,23 @@ textarea:focus {
   box-shadow: 0 2px 10px rgba(21, 128, 61, 0.3);
 }
 
-.module-icon--vdm {
+.module-icon--auto-1 {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  box-shadow: 0 2px 10px rgba(30, 64, 175, 0.3);
+}
+
+.module-icon--auto-2 {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  box-shadow: 0 2px 10px rgba(29, 78, 216, 0.3);
+}
+
+.module-icon--auto-3 {
   background: linear-gradient(135deg, #1d4ed8, #2563eb);
   box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
 }
 
-.module-icon--publish-path {
-  background: linear-gradient(135deg, #a855f7, #3b82f6);
+.module-icon--auto-4 {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
   box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
 }
 
