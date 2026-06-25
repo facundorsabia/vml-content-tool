@@ -80,7 +80,7 @@ vml-content-tool/
 * **Protección XSS**: Los valores se sanitizan antes de inyectarlos, escapando entidades HTML.
 
 ### 6. M&O VDM Process
-Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para configurar por completo la estructura de equipamientos, categorías y opciones en AEM VDM:
+Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para configurar por completo la estructura de equipamientos, categorías y opciones en AEM VDM. Cuenta con una interfaz de **sub-acordeones exclusivos** y memoria de estado inteligente (si pineás la herramienta, recordará exactamente qué paso estabas utilizando). Adicionalmente, cuenta con **limpieza automática** de memoria y de textareas al finalizar cada tarea exitosamente.
 
 #### 1. VDM Equipment Mass Creator
 * Permite crear masivamente equipamientos dentro de la carpeta correspondiente en AEM de manera directa y veloz, puenteando la pesada y lenta UI clásica.

@@ -113,7 +113,7 @@ When adding a new module (e.g., "Link Checker" or "Alt Visualizer"), you **must*
 1. **Module Folder:** Create a new folder inside `modules/` (e.g., `modules/[module-name]/`).
 2. **Popup UI Logic:** Place all UI triggers and state queries in `modules/[module-name]/popup-[module-name].js`.
 3. **Content Script Logic:** Place actual page traversal or DOM editing logic in `modules/[module-name]/content-[module-name].js`.
-4. **UI Integration:** Register the module inside `core/popup.html` using an accordion container structure. Add the modular `<script src="../modules/[module-name]/popup-[module-name].js"></script>` block at the bottom.
+4. **UI Integration:** Register the module inside `core/popup.html` using an accordion or sub-accordion container structure. Add the modular `<script src="../modules/[module-name]/popup-[module-name].js"></script>` block at the bottom.
 5. **Manifest Registration:** Append the newly created content script path to the `"js"` files inside the `"content_scripts"` array of `manifest.json`.
 6. **Styling Integration:** Place all new aesthetic style declarations (badges, animations, custom markers) at the end of `core/content.css` or `core/popup.css`.
 
@@ -127,6 +127,7 @@ Every developer and AI agent working on this extension must satisfy the followin
 * **Safe Iframe Traversal:** Do not attempt cross-origin traversal which triggers browser security errors. Only query iframes that satisfy the **Same-Origin (CORS)** rule. Let other iframe entities fail silently.
 * **Isolated World Constraints:** Keep in mind that content scripts execute in isolated scopes provided by Chrome. Do not rely on variables declared in the page's host scope, nor mutate properties on the host window object directly.
 * **Minimal Scope Permissions:** Limit manifest configuration strictly to required privileges (`storage`, `activeTab`, `scripting`).
+* **Auto-Clear State (Memory Leak Prevention):** Whenever a module utilizes `chrome.storage.local` to save input data automatically, it MUST wipe the `textarea` and clear the specific storage key upon successful task completion. Do not leave stale data lingering in the UI for the next task.
 
 ---
 
