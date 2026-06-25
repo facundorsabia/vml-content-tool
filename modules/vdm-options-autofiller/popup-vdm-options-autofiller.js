@@ -92,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (response.success) {
             showStatus('success', '✔ Cells autofilled!');
+            inputEl.value = '';
+            chrome.storage.local.remove(storageKey);
           } else if (response.error === 'missing_options' && response.missingTitles) {
             const uniqueMissing = [...new Set(response.missingTitles)];
             showStatus('error', '⚠️ Process aborted due to missing equipments.');

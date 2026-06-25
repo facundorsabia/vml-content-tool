@@ -113,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (message.completed) {
         statusEl.textContent = `Completed: ${message.total}/${message.total} created. Please REFRESH the page to see changes.`;
         statusEl.style.color = '#4ade80'; // Success green
+        textarea.value = '';
+        chrome.storage.local.remove('saved_vdmEquipmentInput');
         btnCreate.disabled = false;
       } else {
         statusEl.textContent = `Creating ${message.current}/${message.total}...`;

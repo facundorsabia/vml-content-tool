@@ -112,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
           showStatus('success',
             `✔ Completed: ${response.filled} cell(s) filled, ${response.skipped} skipped.`
           );
+          inputEl.value = '';
+          chrome.storage.local.remove(storageKey);
         } else {
           showStatus('error', response.error || 'Unknown error while filling table.');
         }

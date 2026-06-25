@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Restaurar estado desde storage o abrir Productivity por defecto
-  chrome.storage.local.get(['lastActiveTab', 'lastActiveAccordion', 'pinMandO'], (result) => {
+  chrome.storage.local.get(['lastActiveTab', 'lastActiveAccordion', 'lastActiveSubAccordion', 'pinMandO'], (result) => {
     if (pinMandO) {
       pinMandO.checked = result.pinMandO || false;
     }
@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       activateTab('automation');
       const item = document.getElementById('pinMandO').closest('.accordion-item');
       if (item) item.classList.add('active');
+      restoreSubAccordion(result.lastActiveSubAccordion);
       return;
     }
 
@@ -113,7 +114,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+    
+    restoreSubAccordion(result.lastActiveSubAccordion);
   });
+
+  function restoreSubAccordion(moduleId) {
+    if (!moduleId) return;
+    const infoBtn = document.querySelector(`.sub-accordion-header .info-btn[data-module="${moduleId}"]`);
+    if (infoBtn) {
+      const item = infoBtn.closest('.sub-accordion-item');
+      const parentInner = infoBtn.closest('.accordion-inner');
+      if (parentInner && item) {
+        parentInner.querySelectorAll('.sub-accordion-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      }
+    }
+  }
 
 
   // ── ACCORDION ─────────────────────────────────────────────────
@@ -143,6 +159,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         chrome.storage.local.remove('lastActiveAccordion');
+      }
+    });
+  });
+
+  // ── SUB-ACCORDION ─────────────────────────────────────────────
+  document.querySelectorAll('.sub-accordion-header').forEach(header => {
+    header.addEventListener('click', (e) => {
+      // Ignore click if it's on the info-btn
+      if (e.target.closest('.info-btn')) return;
+
+      const item = header.parentElement;
+      const isOpen = item.classList.contains('active');
+      const parentAccordionInner = item.closest('.accordion-inner');
+
+      // Exclusivity: Close sibling sub-accordions
+      if (parentAccordionInner) {
+        parentAccordionInner.querySelectorAll('.sub-accordion-item').forEach(i => i.classList.remove('active'));
+      }
+
+      if (!isOpen) {
+        item.classList.add('active');
+        const infoBtn = header.querySelector('.info-btn');
+        if (infoBtn) {
+          chrome.storage.local.set({ lastActiveSubAccordion: infoBtn.dataset.module });
+        }
+      } else {
+        chrome.storage.local.remove('lastActiveSubAccordion');
       }
     });
   });

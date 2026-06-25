@@ -142,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (message.completed) {
         statusEl.textContent = `Successfully completed! Please REFRESH the page to see changes.`;
         statusEl.style.color = '#4ade80'; // Success green
+        textarea.value = '';
+        chrome.storage.local.remove('saved_vdmCategoryInput');
         btnCreate.disabled = false;
       } else if (message.error) {
         statusEl.textContent = `Error: ${message.error}`;

@@ -345,54 +345,73 @@
             <div style="display: flex; flex-direction: column; gap: 20px; padding-top: 14px; padding-bottom: 24px;">
 
             <!-- Step 1: VDM Equipment Mass Creator -->
-            <div class="vdm-step-section vdm-step-section--step1"
-              style="border-bottom: 1px solid var(--border); padding-bottom: 16px;">
-              <div class="module-title-row" style="margin-bottom: 8px;">
-                <h4 class="step-title step-title--step1">
-                  1. VDM Equipment Mass Creator
-                </h4>
-                <button class="info-btn" data-module="equipmentCreator" type="button" aria-label="Show info">i</button>
+            <div class="sub-accordion-item sub-accordion-step1 active">
+              <div class="sub-accordion-header">
+                <div class="module-title-row">
+                  <h4 class="step-title step-title--step1">1. VDM Equipment Mass Creator</h4>
+                  <button class="info-btn" data-module="equipmentCreator" type="button" aria-label="Show info">i</button>
+                </div>
+                <span class="sub-accordion-icon">&#9662;</span>
               </div>
-              <textarea id="vdmEquipmentInput"
-                placeholder="Paste only columns: [Option Category] & [Title] for US...or only [Title] for CA"
-                rows="4"></textarea>
-              <button id="btnCreateEquipments" class="btn-search" style="width: 100%; margin-top: 4px;">CREATE
-                EQUIPMENTS</button>
-              <p id="vdmEquipmentStatus" class="autofill-status"
-                style="display: none; margin-top: 8px; font-size: 12px;"></p>
+              <div class="sub-accordion-content">
+                <div class="sub-accordion-inner">
+                  <div class="sub-accordion-wrapper">
+                    <textarea id="vdmEquipmentInput"
+                      placeholder="Paste only columns: [Option Category] & [Title] for US...or only [Title] for CA"
+                      rows="4"></textarea>
+                    <button id="btnCreateEquipments" class="btn-search" style="width: 100%; margin-top: 4px;">CREATE
+                      EQUIPMENTS</button>
+                    <p id="vdmEquipmentStatus" class="autofill-status"
+                      style="display: none; margin-top: 8px; font-size: 12px;"></p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Step 2: VDM Category Creator -->
-            <div class="vdm-step-section vdm-step-section--step2"
-              style="border-bottom: 1px solid var(--border); padding-bottom: 16px;">
-              <div class="module-title-row" style="margin-bottom: 8px;">
-                <h4 class="step-title step-title--step2">
-                  2. VDM Category Creator
-                </h4>
-                <button class="info-btn" data-module="categoryCreator" type="button" aria-label="Show info">i</button>
+            <div class="sub-accordion-item sub-accordion-step2">
+              <div class="sub-accordion-header">
+                <div class="module-title-row">
+                  <h4 class="step-title step-title--step2">2. VDM Category Creator</h4>
+                  <button class="info-btn" data-module="categoryCreator" type="button" aria-label="Show info">i</button>
+                </div>
+                <span class="sub-accordion-icon">&#9662;</span>
               </div>
-              <textarea id="vdmCategoryInput" placeholder="Paste only columns: [Category] & [Subcategory] & [Title]"
-                rows="4"></textarea>
-              <button id="btnCreateCategories" class="btn-search" style="width: 100%; margin-top: 4px;">CREATE
-                CATEGORIES</button>
-              <p id="vdmCategoryStatus" class="autofill-status"
-                style="display: none; margin-top: 8px; font-size: 12px;"></p>
+              <div class="sub-accordion-content">
+                <div class="sub-accordion-inner">
+                  <div class="sub-accordion-wrapper">
+                    <textarea id="vdmCategoryInput" placeholder="Paste only columns: [Category] & [Subcategory] & [Title]"
+                      rows="4"></textarea>
+                    <button id="btnCreateCategories" class="btn-search" style="width: 100%; margin-top: 4px;">CREATE
+                      CATEGORIES</button>
+                    <p id="vdmCategoryStatus" class="autofill-status"
+                      style="display: none; margin-top: 8px; font-size: 12px;"></p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Step 3: VDM Options Autofiller -->
-            <div class="vdm-step-section vdm-step-section--step3" style="padding-bottom: 4px;">
-              <div class="module-title-row" style="margin-bottom: 8px;">
-                <h4 class="step-title step-title--step3">
-                  3. VDM Options Autofiller
-                </h4>
-                <button class="info-btn" data-module="optionsAutofiller" type="button" aria-label="Show info">i</button>
+            <div class="sub-accordion-item sub-accordion-step3">
+              <div class="sub-accordion-header">
+                <div class="module-title-row">
+                  <h4 class="step-title step-title--step3">3. VDM Options Autofiller</h4>
+                  <button class="info-btn" data-module="optionsAutofiller" type="button" aria-label="Show info">i</button>
+                </div>
+                <span class="sub-accordion-icon">&#9662;</span>
               </div>
-              <textarea id="dropdownInput" placeholder="Copy only TITLE & Optionality Columns with HEADERS"
-                rows="3"></textarea>
-              <button id="btnApplyDropdown" class="btn-search" style="width: 100%; margin-top: 4px;">APPLY TO
-                DROPDOWNS</button>
-              <p id="dropdownStatus" class="autofill-status" style="display: none; margin-top: 8px; font-size: 12px;">
-              </p>
+              <div class="sub-accordion-content">
+                <div class="sub-accordion-inner">
+                  <div class="sub-accordion-wrapper">
+                    <textarea id="dropdownInput" placeholder="Copy only TITLE & Optionality Columns with HEADERS"
+                      rows="4"></textarea>
+                    <button id="btnApplyDropdown" class="btn-search" style="width: 100%; margin-top: 4px;">APPLY TO
+                      DROPDOWNS</button>
+                    <p id="dropdownStatus" class="autofill-status" style="display: none; margin-top: 8px; font-size: 12px;">
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             </div>

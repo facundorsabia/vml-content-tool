@@ -160,6 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
           showStatus('success',
             `✔ Completed: ${response.filled} field(s) filled.`
           );
+          inputEl.value = '';
+          chrome.storage.local.remove(storageKey);
         } else {
           showStatus('error', response.error || 'Unknown error while filling table.');
         }
