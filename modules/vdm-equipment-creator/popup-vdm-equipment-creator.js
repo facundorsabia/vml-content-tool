@@ -3,6 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const textarea = document.getElementById('vdmEquipmentInput');
   const statusEl = document.getElementById('vdmEquipmentStatus');
 
+  // --- Auto-Save Textarea Content ---
+  const storageKey = 'saved_vdmEquipmentInput';
+  chrome.storage.local.get([storageKey], (result) => {
+    if (result[storageKey]) {
+      textarea.value = result[storageKey];
+    }
+  });
+  textarea.addEventListener('input', () => {
+    chrome.storage.local.set({ [storageKey]: textarea.value });
+  });
+
   if (!btnCreate || !textarea || !statusEl) return;
 
   btnCreate.addEventListener('click', async () => {
@@ -102,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (message.completed) {
         statusEl.textContent = `Completed: ${message.total}/${message.total} created. Please REFRESH the page to see changes.`;
         statusEl.style.color = '#4ade80'; // Success green
+        textarea.value = '';
+        chrome.storage.local.remove('saved_vdmEquipmentInput');
         btnCreate.disabled = false;
       } else {
         statusEl.textContent = `Creating ${message.current}/${message.total}...`;

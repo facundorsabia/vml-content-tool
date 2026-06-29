@@ -53,7 +53,7 @@ vml-content-tool/
 * Haz clic en el icono de la extensión para abrir el panel de control.
 * Activa el switch para resaltar los espacios `&nbsp;` en la página actual.
 * Los espacios detectados aparecerán con un resaltado **rojo**.
-* **Salvaguarda de Edición & Panel de Contexto**: Para proteger la integridad del contenido en el modo de edición de AEM, la inyección directa de rectángulos rojos se deshabilita automáticamente. En su lugar, el botón flotante **🧹 Correct NBSPs** actuará como detector principal. Cuenta con una flecha expandible (▲) que, al presionarla, despliega un panel flotante de sólo lectura mostrando el fragmento exacto de texto que rodea a cada NBSP detectado, permitiéndote ubicarlos visualmente sin alterar el DOM original. Al clickear el botón principal, se aplicará el recorte inteligente y se enviarán los eventos necesarios para que AEM guarde el texto limpio.
+* **Salvaguarda de Edición & Panel de Contexto**: Para proteger la integridad del contenido en el modo de edición de AEM, la inyección directa de rectángulos rojos se deshabilita automáticamente. En su lugar, el botón flotante **🧹 Correct NBSPs** actuará como detector principal. Cuenta con una flecha expandible (▲) que, al presionarla, despliega un panel flotante de sólo lectura mostrando el fragmento exacto de texto que rodea a cada NBSP detectado o párrafo vacío (`<p><br _rte_temp_br="brEOB"></p>` o `<p><br></p>`), permitiéndote ubicarlos visualmente sin alterar el DOM original. Al clickear el botón principal, se aplicará el recorte inteligente (reemplazando los párrafos vacíos por un `<br>` local al comienzo del párrafo posterior con texto) y se enviarán los eventos necesarios para que AEM guarde el texto limpio.
 * **Limpieza global**: Al pegar datos en cualquier textarea de la extensión, los NBSP se limpian y convierten automáticamente a espacios normales para evitar fallas.
 
 ### 3. HTag Visualizer
@@ -80,7 +80,7 @@ vml-content-tool/
 * **Protección XSS**: Los valores se sanitizan antes de inyectarlos, escapando entidades HTML.
 
 ### 6. M&O VDM Process
-Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para configurar por completo la estructura de equipamientos, categorías y opciones en AEM VDM:
+Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para configurar por completo la estructura de equipamientos, categorías y opciones en AEM VDM. Cuenta con una interfaz de **sub-acordeones exclusivos** y memoria de estado inteligente (si pineás la herramienta, recordará exactamente qué paso estabas utilizando). Adicionalmente, cuenta con **limpieza automática** de memoria y de textareas al finalizar cada tarea exitosamente.
 
 #### 1. VDM Equipment Mass Creator
 * Permite crear masivamente equipamientos dentro de la carpeta correspondiente en AEM de manera directa y veloz, puenteando la pesada y lenta UI clásica.
@@ -130,6 +130,15 @@ Este módulo unifica el flujo de trabajo secuencial en tres pasos numerados para
 * **Agrupación Inteligente**: Clasifica, agrupa y estructura la información automáticamente siguiendo jerarquías estrictas: Category > Feature > Standard/Optional.
 * **Espaciado Visual y Limpieza**: Ignora valores vacíos o nulos (guiones `-`), y aplica espaciados legibles entre grupos para una lectura clara en el entorno de autoría.
 * **Transformación Tipográfica**: Reconoce abreviaturas legales desde Excel como `(R)`, `(TM)` y `(C)` y las inyecta en el DOM de AEM como los símbolos formales `®`, `™` y `©`.
+
+## 🎨 Interfaz Premium y Experiencia de Usuario (UI/UX)
+
+La herramienta cuenta con un diseño de interfaz de nivel premium enfocado en la productividad y el confort visual:
+
+* **Navegación Dinámica por Pestañas:** Los módulos están organizados en tres categorías principales (Productivity, QA & Audit, Automation & Bots). La navegación superior adopta dinámicamente un color de acento propio (Púrpura, Verde Esmeralda o Azul) según la pestaña activa, facilitando el reconocimiento visual inmediato de la herramienta.
+* **Jerarquía Visual (Sub-Acordeones):** Los procesos secuenciales, como el M&O VDM Process, utilizan un elegante diseño de indentación en forma de "línea de tiempo" o árbol de directorios. Cada sub-paso resalta con un borde lateral cuyo color coincide con el de su título, guiando al ojo de forma intuitiva a través del flujo de trabajo.
+* **Memoria de Estado y Pines:** La extensión recuerda qué módulos tenías abiertos mediante un sistema de retención de estado (`chrome.storage.local`). Si "pineas" un panel, al volver a abrir el popup todo estará exactamente donde lo dejaste.
+* **Limpieza Automática y Micro-animaciones:** Los formularios complejos cuentan con limpieza automática (Auto-Clear) tras una inyección exitosa de datos. Todo el ecosistema de la UI está acompañado de transiciones suaves, hover states reactivos y un cuidado Dark Mode.
 
 -------------------------------------------------
 ## 🛡️ Seguridad y Privacidad (AppSec)

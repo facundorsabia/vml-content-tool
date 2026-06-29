@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('btnAutofill');
   const statusEl = document.getElementById('autofillStatus');
 
+  // --- Auto-Save Textarea Content ---
+  const storageKey = 'saved_autofillInput';
+  chrome.storage.local.get([storageKey], (result) => {
+    if (result[storageKey]) {
+      textarea.value = result[storageKey];
+    }
+  });
+  textarea.addEventListener('input', () => {
+    chrome.storage.local.set({ [storageKey]: textarea.value });
+  });
+
   /**
    * Muestra un mensaje de estado en el popup con color según el tipo.
    * @param {'success'|'error'|'info'} type
@@ -101,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
           showStatus('success',
             `✔ Completed: ${response.filled} cell(s) filled, ${response.skipped} skipped.`
           );
+          inputEl.value = '';
+          chrome.storage.local.remove(storageKey);
         } else {
           showStatus('error', response.error || 'Unknown error while filling table.');
         }

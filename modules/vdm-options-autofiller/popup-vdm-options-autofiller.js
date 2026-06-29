@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('btnApplyDropdown');
   const statusEl = document.getElementById('dropdownStatus');
 
+  // --- Auto-Save Textarea Content ---
+  const storageKey = 'saved_dropdownInput';
+  chrome.storage.local.get([storageKey], (result) => {
+    if (result[storageKey]) {
+      inputEl.value = result[storageKey];
+    }
+  });
+  inputEl.addEventListener('input', () => {
+    chrome.storage.local.set({ [storageKey]: inputEl.value });
+  });
+
   function showStatus(type, message) {
     statusEl.textContent = message;
     statusEl.className = 'autofill-status autofill-status--' + type;
@@ -81,6 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (response.success) {
             showStatus('success', '✔ Cells autofilled!');
+            inputEl.value = '';
+            chrome.storage.local.remove(storageKey);
           } else if (response.error === 'missing_options' && response.missingTitles) {
             const uniqueMissing = [...new Set(response.missingTitles)];
             showStatus('error', '⚠️ Process aborted due to missing equipments.');

@@ -29,3 +29,6 @@ extension.zip
 # Misc
 .env
 .cache/
+
+# Archivos generados por el empaquetador
+*.zip
