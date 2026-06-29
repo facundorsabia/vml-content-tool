@@ -336,7 +336,10 @@ function getEditableElements(root = document) {
       const isVisible = !!(input.offsetWidth || input.offsetHeight || input.getClientRects().length);
       
       // Filtramos tipos ignorados, excluimos UI nativa y elementos ocultos (como textareas de respaldo del RTE)
-      if (isVisible && (!type || !skipTypes.includes(type)) && !isAemUiElement(input)) {
+      // También excluimos inputs que contienen HTML markup (mirrors de edición)
+      const value = input.value || '';
+      const hasHtml = /<[a-z/][^>]*>/i.test(value);
+      if (isVisible && (!type || !skipTypes.includes(type)) && !isAemUiElement(input) && !hasHtml) {
         elements.push({
           type: 'input',
           element: input
@@ -351,7 +354,8 @@ function getEditableElements(root = document) {
   try {
     const editables = root.querySelectorAll('[contenteditable="true"]');
     editables.forEach(el => {
-      if (!isAemUiElement(el)) {
+      const isVisible = !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+      if (isVisible && !isAemUiElement(el)) {
         elements.push({
           type: 'contenteditable',
           element: el
@@ -382,10 +386,99 @@ function getEditableElements(root = document) {
   return elements;
 }
 
+function isAemEmptyParagraph(parent, br) {
+  if (!parent) return false;
+  if (parent.hasAttribute('contenteditable')) return false;
+  // Asegurar que esté dentro de un campo editable de AEM
+  if (!parent.closest('[contenteditable="true"]')) return false;
+
+  // Solo considerar elementos de bloque (párrafos, divs, list items, headers)
+  const blockTags = ['P', 'DIV', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+  if (!blockTags.includes(parent.tagName.toUpperCase())) return false;
+
+  // Evitar detectar si no hay ningún texto antes ni después (párrafos aislados sin contenido alrededor)
+  let prevTextSibling = parent.previousElementSibling;
+  while (prevTextSibling && !prevTextSibling.textContent.trim()) {
+    prevTextSibling = prevTextSibling.previousElementSibling;
+  }
+  let nextTextSibling = parent.nextElementSibling;
+  while (nextTextSibling && !nextTextSibling.textContent.trim()) {
+    nextTextSibling = nextTextSibling.nextElementSibling;
+  }
+  if (!prevTextSibling && !nextTextSibling) {
+    return false;
+  }
+
+  const children = Array.from(parent.childNodes);
+  for (const child of children) {
+    if (child === br) continue;
+    if (child.nodeType === Node.ELEMENT_NODE) {
+      return false;
+    }
+    if (child.nodeType === Node.TEXT_NODE) {
+      if (child.nodeValue.trim().length > 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function getAemEmptyParagraphs(element) {
+  const emptyParas = [];
+  if (element.nodeType !== Node.ELEMENT_NODE) return emptyParas;
+
+  try {
+    const tempBrs = element.querySelectorAll('br');
+    tempBrs.forEach(br => {
+      const parent = br.parentElement;
+      if (isAemEmptyParagraph(parent, br)) {
+        emptyParas.push({ parent, br });
+      }
+    });
+  } catch (e) {
+    console.debug('[VML NBSP] Error scanning empty paragraphs:', e);
+  }
+  return emptyParas;
+}
+
+function getTempBrContext(br, parent) {
+  let prefix = '';
+  let suffix = '';
+
+  let prev = parent.previousElementSibling;
+  while (prev && !prev.textContent.trim()) {
+    prev = prev.previousElementSibling;
+  }
+  if (prev) {
+    const prevText = prev.textContent.trim();
+    prefix = (prevText.length > 15 ? '...' : '') + prevText.substring(Math.max(0, prevText.length - 15)) + ' ';
+  }
+
+  let next = parent.nextElementSibling;
+  while (next && !next.textContent.trim()) {
+    next = next.nextElementSibling;
+  }
+  if (next) {
+    const nextText = next.textContent.trim();
+    suffix = ' ' + nextText.substring(0, 15) + (nextText.length > 15 ? '...' : '');
+  }
+
+  return {
+    type: 'temp-br',
+    prefix: prefix.replace(/\n/g, ' ').replace(/\s+/g, ' '),
+    suffix: suffix.replace(/\n/g, ' ').replace(/\s+/g, ' ')
+  };
+}
+
 function getNbspContexts(elInfo) {
   const charNBSP = "\u00A0";
   const contexts = [];
   try {
+    // 1. Scan for actual NBSPs
+    if (elInfo.type === 'input' && /<[a-z/][^>]*>/i.test(elInfo.element.value || '')) {
+      return [];
+    }
     const text = elInfo.type === 'input' ? (elInfo.element.value || '') : (elInfo.element.textContent || '');
     let match;
     const regex = new RegExp(charNBSP, 'g');
@@ -394,7 +487,18 @@ function getNbspContexts(elInfo) {
       const end = Math.min(text.length, match.index + 16);
       let snippet = text.substring(start, end);
       snippet = snippet.replace(/\n/g, ' ').replace(/\s+/g, ' '); // Clean up newlines/extra spaces
-      contexts.push(snippet);
+      contexts.push({
+        type: 'nbsp',
+        snippet: snippet
+      });
+    }
+
+    // 2. Scan for AEM empty paragraphs
+    if (elInfo.type === 'contenteditable') {
+      const emptyParas = getAemEmptyParagraphs(elInfo.element);
+      emptyParas.forEach(({ parent, br }) => {
+        contexts.push(getTempBrContext(br, parent));
+      });
     }
   } catch (e) {
     // Ignore
@@ -404,17 +508,24 @@ function getNbspContexts(elInfo) {
 
 function countNbspInElement(elInfo) {
   const charNBSP = "\u00A0";
+  let count = 0;
   try {
     if (elInfo.type === 'input') {
       const value = elInfo.element.value || '';
-      return (value.match(new RegExp(charNBSP, 'g')) || []).length;
+      if (/<[a-z/][^>]*>/i.test(value)) return 0;
+      count += (value.match(new RegExp(charNBSP, 'g')) || []).length;
     } else {
       const text = elInfo.element.textContent || '';
-      return (text.match(new RegExp(charNBSP, 'g')) || []).length;
+      count += (text.match(new RegExp(charNBSP, 'g')) || []).length;
+
+      if (elInfo.type === 'contenteditable') {
+        count += getAemEmptyParagraphs(elInfo.element).length;
+      }
     }
   } catch (e) {
-    return 0;
+    // Ignore
   }
+  return count;
 }
 
 function updateFloatingButtonState() {
@@ -451,16 +562,29 @@ function updateFloatingButtonState() {
             const item = document.createElement('div');
             item.className = 'vml-nbsp-context-item';
             
-            const parts = ctx.split("\u00A0");
-            parts.forEach((part, index) => {
-              item.appendChild(document.createTextNode(part));
-              if (index < parts.length - 1) {
-                const span = document.createElement('span');
-                span.className = 'vml-nbsp-highlight';
-                span.textContent = 'NBSP';
-                item.appendChild(span);
+            if (ctx.type === 'nbsp') {
+              const parts = ctx.snippet.split("\u00A0");
+              parts.forEach((part, index) => {
+                item.appendChild(document.createTextNode(part));
+                if (index < parts.length - 1) {
+                  const span = document.createElement('span');
+                  span.className = 'vml-nbsp-highlight';
+                  span.textContent = 'NBSP';
+                  item.appendChild(span);
+                }
+              });
+            } else if (ctx.type === 'temp-br') {
+              if (ctx.prefix) {
+                item.appendChild(document.createTextNode(ctx.prefix));
               }
-            });
+              const span = document.createElement('span');
+              span.className = 'vml-nbsp-highlight';
+              span.textContent = 'EMPTY PARA';
+              item.appendChild(span);
+              if (ctx.suffix) {
+                item.appendChild(document.createTextNode(ctx.suffix));
+              }
+            }
             contextList.appendChild(item);
           });
         }
@@ -512,6 +636,7 @@ function correctNbspInElement(elInfo) {
   try {
     if (elInfo.type === 'input') {
       const originalValue = elInfo.element.value || '';
+      if (/<[a-z/][^>]*>/i.test(originalValue)) return 0;
       if (originalValue.includes(charNBSP)) {
         correctedCount = (originalValue.match(new RegExp(charNBSP, 'g')) || []).length;
         
@@ -577,6 +702,51 @@ function correctNbspInElement(elInfo) {
         
         changed = true;
       });
+
+      // 3. Buscar y corregir párrafos vacíos con BR temporal de AEM
+      if (elInfo.type === 'contenteditable') {
+        const emptyParas = getAemEmptyParagraphs(element);
+        if (emptyParas.length > 0) {
+          emptyParas.forEach(({ parent, br }) => {
+            correctedCount++;
+
+            // Buscar contenedor siguiente con texto (preferido)
+            let nextTextContainer = parent.nextElementSibling;
+            while (nextTextContainer) {
+              const tempBrInNext = nextTextContainer.querySelector('br');
+              if (tempBrInNext && isAemEmptyParagraph(nextTextContainer, tempBrInNext)) {
+                nextTextContainer = nextTextContainer.nextElementSibling;
+              } else {
+                break;
+              }
+            }
+
+            if (nextTextContainer) {
+              // Insertar <br> al principio de nextTextContainer (justo después del <p> de apertura)
+              nextTextContainer.insertBefore(document.createElement('br'), nextTextContainer.firstChild);
+            } else {
+              // Buscar contenedor anterior con texto (fallback)
+              let prevTextContainer = parent.previousElementSibling;
+              while (prevTextContainer) {
+                const tempBrInPrev = prevTextContainer.querySelector('br');
+                if (tempBrInPrev && isAemEmptyParagraph(prevTextContainer, tempBrInPrev)) {
+                  prevTextContainer = prevTextContainer.previousElementSibling;
+                } else {
+                  break;
+                }
+              }
+              if (prevTextContainer) {
+                // Insertar <br> al final de prevTextContainer
+                prevTextContainer.appendChild(document.createElement('br'));
+              }
+            }
+
+            // Eliminar el párrafo vacío
+            parent.remove();
+            changed = true;
+          });
+        }
+      }
 
       if (changed) {
         // Unir nodos de texto adyacentes
