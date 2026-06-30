@@ -1,0 +1,159 @@
+# VML Content Tool — AI Agent Rules & Architecture Guideline
+
+Welcome to the **VML Content Tool** repository. This file serves as the definitive guidelines, architecture map, and AppSec requirements for any AI Agent working on this codebase. Always adhere strictly to these patterns to maintain code quality, security, and performance.
+
+---
+
+## 📌 Project Context
+* **Name:** VML Content Tool
+* **Type:** Google Chrome Extension (Manifest V3)
+* **Author:** VML Argentina - Engineering Team
+* **Purpose:** A lightweight, high-performance QA suite tailored for Content Editors, particularly optimized for Adobe Experience Manager (AEM) environments.
+
+---
+
+## 🏗️ Folder Structure & Architecture
+The extension follows a **strict modular structure**. Keep popup UI handlers separate from page execution scripts. Do not write monolithic scripts.
+
+```text
+vml-content-tool/
+├── manifest.json                  # Extension configuration (Manifest V3)
+├── assets/
+│   └── logo-vml.png               # Branding assets
+├── core/
+│   ├── content.css                # Injected CSS styles (resaltados, badges, transition effects)
+│   ├── popup.css                  # UI styles (premium dark mode theme)
+│   ├── popup.html                 # Main popup UI (premium accordion layout)
+│   └── popup-ui.js                # Core UI helper (handles accordion open/close)
+├── modules/
+│   ├── aem-switcher/              # AEM Quick Switcher module
+│   │   └── popup-aem.js
+│   ├── disclouse-finder/          # Exact Disclosure Finder module
+│   │   ├── content-disclouse-finder.js
+│   │   └── popup-disclouse-finder.js
+│   ├── htags-visualizer/          # HTag Visualizer module
+│   │   ├── content-htags-visualizer.js
+│   │   └── popup-htags-visualizer.js
+│   ├── nbsp-visualizer/           # NBSP detector module
+│   │   ├── content-nbsp-visualizer.js
+│   │   └── popup-nbsp-visualizer.js
+│   ├── vdm-category-creator/      # VDM Category Creator module
+│   │   ├── content-vdm-category-creator.js
+│   │   └── popup-vdm-category-creator.js
+│   ├── vdm-equipment-creator/     # VDM Equipment Mass Creator module
+│   │   ├── content-vdm-equipment-creator.js
+│   │   └── popup-vdm-equipment-creator.js
+│   ├── vdm-options-autofiller/    # VDM Options Autofiller module
+│   │   ├── content-vdm-options-autofiller.js
+│   │   └── popup-vdm-options-autofiller.js
+│   ├── vdm-specs-autofiller/      # Specs VDM Autofiller module
+│   │   ├── content-vdm-specs-autofiller.js
+│   │   └── popup-vdm-specs-autofiller.js
+│   ├── cloud-specs-autofiller/    # Cloud Specs Autofiller module
+│   │   ├── content-cloud-specs-autofiller.js
+│   │   └── popup-cloud-specs-autofiller.js
+│   └── cloud-options-autofiller/  # Cloud Options Autofiller module
+│       ├── content-cloud-options-autofiller.js
+│       └── popup-cloud-options-autofiller.js
+├── .antigravityrules              # AI Agent System Instructions (This file)
+└── Readme.md                      # End-user documentation
+```
+
+---
+
+## 🔄 Core Flows
+
+### 1. NBSP Detector
+* **Trigger:** User opens popup $\rightarrow$ `popup-nbsp-visualizer.js` reads `chrome.storage.local.active`.
+* **Action:** Turning the toggle **ON** saves `active: true` and reloads the current active tab. Turning it **OFF** saves `active: false` and reloads the tab.
+* **Execution:** `content-nbsp-visualizer.js` is automatically injected $\rightarrow$ if `active` is `true`, it recursively parses `document.body` text nodes searching for `\u00A0` (non-breaking spaces).
+* **Result:** Every detected `&nbsp;` is safely wrapped in a `<span class="highlight-nbsp">` (renders a semi-transparent red outline and background for high visibility).
+
+### 2. Exact Disclosure Finder
+* **Trigger:** User enters exact search criteria into the popup's text area (Module 3).
+* **Action:** Clicking **BUSCAR** fires `popup-disclouse-finder.js` which normalizes and dispatches an `exactMatchSearch` message to the active tab.
+* **Execution:** `content-disclouse-finder.js` receives the message, parses all page elements (traversing nested, same-origin iframes), and performs a strict `===` equivalence check on normalized text.
+* **Result:** Matching elements are decorated with `.highlight-exact-match` (green overlay). The page automatically scrolls to the first match. The UI provides interactive pagination controls (▲/▼) to step through elements cleanly.
+
+### 3. Specs VDM Autofiller
+* **Trigger:** User copies a cell range from Excel (TSV format) and pastes it into the Module 4 textarea.
+* **Action:** Clicking **AUTOCOMPLETAR TABLA** dispatches `popup-vdm-specs-autofiller.js` to parse the input (\n for rows, \t for columns) and sends the 2D array via message passing to the page context.
+* **Execution:** `content-vdm-specs-autofiller.js` locates the `.spec--table tbody tr` in the DOM and maps each column to active Quill editor instances (`.ql-editor[contenteditable="true"]`).
+* **Trigger Events:** Generates full keyboard and input events (`focus` $\rightarrow$ `Ctrl+A` $\rightarrow$ `insertText` $\rightarrow$ `change` $\rightarrow$ `blur`) with a strict `80ms` delay between cells to allow AEM's framework handlers to intercept and save state.
+* **Result:** Feeds execution status back to the popup, giving real-time feedback on injected rows.
+
+### 4. HTag Visualizer
+* **Trigger:** User toggles the state in Module 5 $\rightarrow$ `popup-htags-visualizer.js` toggles `chrome.storage.local.htagsActive`.
+* **Action:** Toggling **ON** reloads the active tab to execute the visualizer. Toggling **OFF** reloads the active tab to clear all visual artifacts.
+* **Execution:** `content-htags-visualizer.js` matches all headers `h1, h2, h3, h4, h5, h6` in the active document.
+* **Result:** Appends a small, color-coded, highly visible badge (e.g. `<span class="htag-badge htag-badge-h1">H1</span>`) directly alongside each header, letting QA teams verify structure instantly without opening inspector tools.
+
+### 5. VDM Options Autofiller
+* **Trigger:** User copies a matrix range from Excel (TSV format) and pastes it into the textarea.
+* **Action:** Clicking **AUTOCOMPLETAR OPCIONES** dispatches `popup-vdm-options-autofiller.js` to parse the input and sends the array to the page context.
+* **Execution:** `content-vdm-options-autofiller.js` locates the appropriate AEM rows, maps Excel columns to AEM table columns via alphanumeric suffix matching if a header row is present, forces lazy rendering of Vue selects, and perfectly simulates human events (`mousedown`, `click`, `change`, `blur`) on the correct `<select>` elements.
+* **Result:** Real-time visual feedback highlights the dropdowns being processed and completes the entire matrix configuration autonomously, even if columns are ordered differently.
+
+### 6. VDM Equipment Mass Creator
+* **Trigger:** User selects an existing VDM component in AEM and uses the form inside the extension popup.
+* **Action:** `popup-vdm-equipment-creator.js` dispatches an initialization message to capture the path.
+* **Execution:** `content-vdm-equipment-creator.js` extracts the `data-path` from the DOM. Then, it uses the Sling API via `fetch()` to iteratively create multiple nodes (`sling:resourceType="vml/components/content/vdm-equipment-item"`), correcting Excel title/category orders intelligently, and safely encoding special characters to generate robust `:nameHint` endpoints.
+* **Result:** Triggers a native UI page refresh upon completion to reflect the newly created equipment list directly in the AEM authoring environment.
+
+### 7. VDM Category Creator
+* **Trigger:** User copies tabular categories and subcategories from Excel and pastes them into the Module 8 textarea.
+* **Action:** `popup-vdm-category-creator.js` parses the input (using a robust TSV parser to support line breaks and clean dropdown characters) and dispatches a `createCategories` message to the tab context.
+* **Execution:** `content-vdm-category-creator.js` queries AEM's JCR options structure. It checks if the category and subcategory nodes already exist in the JCR tree (including root and `jcr:content` nodes) using normalized exact case-insensitive matches. Missing nodes are created, and options are associated directly under their target subcategory node.
+* **Result:** Updates the tree structure and posts the Sling Import JSON to AEM, saving category/subcategory configurations without node duplicates.
+
+---
+
+## 🧩 Extension Integration Conventions
+When adding a new module (e.g., "Link Checker" or "Alt Visualizer"), you **must** follow this strict integration pattern:
+1. **Module Folder:** Create a new folder inside `modules/` (e.g., `modules/[module-name]/`).
+2. **Popup UI Logic:** Place all UI triggers and state queries in `modules/[module-name]/popup-[module-name].js`.
+3. **Content Script Logic:** Place actual page traversal or DOM editing logic in `modules/[module-name]/content-[module-name].js`.
+4. **UI Integration:** Register the module inside `core/popup.html` using an accordion or sub-accordion container structure. Add the modular `<script src="../modules/[module-name]/popup-[module-name].js"></script>` block at the bottom.
+5. **Manifest Registration:** Append the newly created content script path to the `"js"` files inside the `"content_scripts"` array of `manifest.json`.
+6. **Styling Integration:** Place all new aesthetic style declarations (badges, animations, custom markers) at the end of `core/content.css` or `core/popup.css`.
+
+---
+
+## 🛡️ Strict AppSec & Quality Rules
+Every developer and AI agent working on this extension must satisfy the following security and design parameters. Failure to do so will reject pull requests:
+
+* **No innerHTML (XSS Protection):** Never use `.innerHTML` or `eval()`. Use `document.createElement()` and `element.textContent` or `element.innerText` to prevent DOM XSS vulnerabilities.
+* **CSS Injection Prevention:** Never construct dynamic CSS strings using raw user inputs. Opt for static styling rules in `content.css` and use class assignment (`classList.add`) or strictly validated types (e.g., raw floats for opacity values).
+* **Safe Iframe Traversal:** Do not attempt cross-origin traversal which triggers browser security errors. Only query iframes that satisfy the **Same-Origin (CORS)** rule. Let other iframe entities fail silently.
+* **Isolated World Constraints:** Keep in mind that content scripts execute in isolated scopes provided by Chrome. Do not rely on variables declared in the page's host scope, nor mutate properties on the host window object directly.
+* **Minimal Scope Permissions:** Limit manifest configuration strictly to required privileges (`storage`, `activeTab`, `scripting`).
+* **Auto-Clear State (Memory Leak Prevention):** Whenever a module utilizes `chrome.storage.local` to save input data automatically, it MUST wipe the `textarea` and clear the specific storage key upon successful task completion. Do not leave stale data lingering in the UI for the next task.
+
+---
+
+## 📝 Documentation Integrity Rule
+> [!IMPORTANT]
+> **Keep Documentation strictly synchronized.**
+> Whenever you modify codebase files or implement a new feature, you MUST assess if `Readme.md` or `.antigravityrules` needs revision. Never leave features undocumented. Keep all changes clean, commented, and explained in the primary documentation files.
+
+---
+
+## 🤖 Semantic Versioning (SemVer) Rule
+> [!IMPORTANT]
+> **Manual Semantic Versioning:**
+> This repository uses manual Semantic Versioning (MAJOR.MINOR.PATCH).
+> You must **never** automatically increment the version. The human developer will manually update the `version` field in `manifest.json` before committing to specify if a change is a patch, a minor improvement, or a major update.
+
+---
+
+## 🚫 No Automated Commits Rule
+> [!IMPORTANT]
+> **Never Execute Commits:**
+> You must **never** execute `git commit` commands after finishing your modifications. Committing code is strictly reserved as a task for the human developer. Leave the modified files as they are for the human to review and commit manually.
+
+---
+
+## 🗣️ Agent Response & Token Optimization Rules
+> [!IMPORTANT]
+> * **Language:** All AI Agent responses, explanations, and summaries MUST be written exclusively in **English**, regardless of the language utilized by the user.
+> * **Conciseness & Token Optimization:** Keep all answers extremely short, concise, and direct. Maximize token efficiency by avoiding conversational fluff, redundant pleasantries, or verbose code summaries. Let clean code modifications, diffs, and precise files speak for themselves.

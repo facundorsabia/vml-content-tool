@@ -290,15 +290,15 @@ function initAemEditorNbspCorrector() {
 
   const expandBtn = document.createElement('button');
   expandBtn.id = 'vml-nbsp-expand-btn';
-  expandBtn.innerHTML = '&#9650;'; // Up arrow
+  expandBtn.textContent = '\u25B2'; // Up arrow
 
   expandBtn.addEventListener('click', () => {
     if (panel.style.display === 'flex') {
       panel.style.display = 'none';
-      expandBtn.innerHTML = '&#9650;';
+      expandBtn.textContent = '\u25B2';
     } else {
       panel.style.display = 'flex';
-      expandBtn.innerHTML = '&#9660;';
+      expandBtn.textContent = '\u25BC';
     }
   });
 
@@ -471,6 +471,34 @@ function getTempBrContext(br, parent) {
   };
 }
 
+function getAemInlineTempBrs(element) {
+  const inlineTempBrs = [];
+  if (element.nodeType !== Node.ELEMENT_NODE) return inlineTempBrs;
+
+  try {
+    const tempBrs = element.querySelectorAll('br[_rte_temp_br]');
+    tempBrs.forEach(br => {
+      const parent = br.parentElement;
+      if (parent && parent.closest('[contenteditable="true"]') && !isAemEmptyParagraph(parent, br)) {
+        inlineTempBrs.push({ parent, br });
+      }
+    });
+  } catch (e) {
+    console.debug('[VML NBSP] Error scanning inline temp BRs:', e);
+  }
+  return inlineTempBrs;
+}
+
+function getTempBrInlineContext(br, parent) {
+  const text = parent.textContent || '';
+  const snippet = text.substring(0, 30) + (text.length > 30 ? '...' : '');
+  return {
+    type: 'temp-br-inline',
+    snippet: snippet.replace(/\n/g, ' ').replace(/\s+/g, ' '),
+    element: br
+  };
+}
+
 function getNbspContexts(elInfo) {
   const charNBSP = "\u00A0";
   const contexts = [];
@@ -500,6 +528,14 @@ function getNbspContexts(elInfo) {
         contexts.push(getTempBrContext(br, parent));
       });
     }
+
+    // 3. Scan for AEM inline temp BRs
+    if (elInfo.type === 'contenteditable') {
+      const inlineTempBrs = getAemInlineTempBrs(elInfo.element);
+      inlineTempBrs.forEach(({ parent, br }) => {
+        contexts.push(getTempBrInlineContext(br, parent));
+      });
+    }
   } catch (e) {
     // Ignore
   }
@@ -520,6 +556,7 @@ function countNbspInElement(elInfo) {
 
       if (elInfo.type === 'contenteditable') {
         count += getAemEmptyParagraphs(elInfo.element).length;
+        count += getAemInlineTempBrs(elInfo.element).length;
       }
     }
   } catch (e) {
@@ -557,7 +594,7 @@ function updateFloatingButtonState() {
         btnText.textContent = `Correct ${totalNbsp} NBSP${totalNbsp > 1 ? 's' : ''}`;
 
         if (contextList) {
-          contextList.innerHTML = '';
+          contextList.textContent = '';
           allContexts.forEach(ctx => {
             const item = document.createElement('div');
             item.className = 'vml-nbsp-context-item';
@@ -584,6 +621,14 @@ function updateFloatingButtonState() {
               if (ctx.suffix) {
                 item.appendChild(document.createTextNode(ctx.suffix));
               }
+            } else if (ctx.type === 'temp-br-inline') {
+              if (ctx.snippet) {
+                item.appendChild(document.createTextNode(ctx.snippet));
+              }
+              const span = document.createElement('span');
+              span.className = 'vml-nbsp-highlight';
+              span.textContent = 'TEMP BR';
+              item.appendChild(span);
             }
             contextList.appendChild(item);
           });
@@ -593,7 +638,7 @@ function updateFloatingButtonState() {
       if (btnText && !btnText.dataset.corrected) {
         container.style.display = 'none';
         if (panel) panel.style.display = 'none';
-        if (expandBtn) expandBtn.innerHTML = '&#9650;';
+        if (expandBtn) expandBtn.textContent = '\u25B2';
       }
     }
   }
@@ -743,6 +788,18 @@ function correctNbspInElement(elInfo) {
 
             // Eliminar el párrafo vacío
             parent.remove();
+            changed = true;
+          });
+        }
+      }
+
+      // 4. Buscar y corregir BRs temporales en párrafos con contenido (inline temp BRs)
+      if (elInfo.type === 'contenteditable') {
+        const inlineTempBrs = getAemInlineTempBrs(element);
+        if (inlineTempBrs.length > 0) {
+          inlineTempBrs.forEach(({ br }) => {
+            correctedCount++;
+            br.removeAttribute('_rte_temp_br');
             changed = true;
           });
         }
