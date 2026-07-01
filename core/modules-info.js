@@ -96,5 +96,14 @@ const MODULES_DOCUMENTATION = {
       "Transforms copied TSV data into AEM Cloud Specs format with ^^ separators.",
       "Supports injecting multiple fields automatically."
     ]
+  },
+  cloudOptionsAutofiller: {
+    title: "Cloud Options Autofiller",
+    description: "Autofill Cloud option fields with category, subcategory, title, and model data from Excel.",
+    validations: [
+      "Requires copying columns: Category, Subcategory, Title, and Model from Excel in TSV format.",
+      "Matches and maps Excel data to the corresponding AEM Cloud option fields automatically.",
+      "Supports direct copy-paste of table cells from Microsoft Excel."
+    ]
   }
 };
