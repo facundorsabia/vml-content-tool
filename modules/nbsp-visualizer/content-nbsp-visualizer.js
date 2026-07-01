@@ -386,6 +386,13 @@ function getEditableElements(root = document) {
   return elements;
 }
 
+function hasRenderableText(element) {
+  if (!element) return false;
+  const text = element.textContent || '';
+  const cleanText = text.replace(/[\s\u00A0]/g, '');
+  return cleanText.length > 0;
+}
+
 function isAemEmptyParagraph(parent, br) {
   if (!parent) return false;
   if (parent.hasAttribute('contenteditable')) return false;
@@ -427,6 +434,7 @@ function isAemEmptyParagraph(parent, br) {
 function getAemEmptyParagraphs(element) {
   const emptyParas = [];
   if (element.nodeType !== Node.ELEMENT_NODE) return emptyParas;
+  if (!hasRenderableText(element)) return emptyParas;
 
   try {
     const tempBrs = element.querySelectorAll('br');
@@ -474,6 +482,7 @@ function getTempBrContext(br, parent) {
 function getAemInlineTempBrs(element) {
   const inlineTempBrs = [];
   if (element.nodeType !== Node.ELEMENT_NODE) return inlineTempBrs;
+  if (!hasRenderableText(element)) return inlineTempBrs;
 
   try {
     const tempBrs = element.querySelectorAll('br[_rte_temp_br]');
@@ -525,6 +534,14 @@ function getNbspContexts(elInfo) {
     if (elInfo.type === 'contenteditable') {
       const emptyParas = getAemEmptyParagraphs(elInfo.element);
       emptyParas.forEach(({ parent, br }) => {
+        if (!br.__vml_logged) {
+          br.__vml_logged = true;
+          console.group('[VML Debug] Detected EMPTY PARA');
+          console.log('Element:', br);
+          console.log('Parent outerHTML:', parent.outerHTML);
+          console.log('Parent textContent:', parent.textContent);
+          console.groupEnd();
+        }
         contexts.push(getTempBrContext(br, parent));
       });
     }
@@ -533,6 +550,14 @@ function getNbspContexts(elInfo) {
     if (elInfo.type === 'contenteditable') {
       const inlineTempBrs = getAemInlineTempBrs(elInfo.element);
       inlineTempBrs.forEach(({ parent, br }) => {
+        if (!br.__vml_logged) {
+          br.__vml_logged = true;
+          console.group('[VML Debug] Detected TEMP BR (inline)');
+          console.log('Element:', br);
+          console.log('Parent outerHTML:', parent.outerHTML);
+          console.log('Parent textContent:', parent.textContent);
+          console.groupEnd();
+        }
         contexts.push(getTempBrInlineContext(br, parent));
       });
     }
